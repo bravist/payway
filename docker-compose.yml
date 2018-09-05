@@ -10,7 +10,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8001:8001"
+      - "8001:8000"
     depends_on:                        #依赖服务
       - mysql
     links:                             #链接另一个服务
@@ -20,7 +20,7 @@ services:
     image: adminer
     container_name: adminer
     ports:
-    - "8081:8081"
+    - "8081:8080"
     depends_on:                        #服务依赖
     - mysql
     links:                             #链接另一个服务
