@@ -1,0 +1,40 @@
+version: "3"
+services: 
+  
+  payway:                             #支付网关服务
+    build: ./docker                   #构建目录，即Dockerfile所在目录
+    image: ry/payway                  #镜像名
+    container_name: payway            #容器名
+    volumes:                          #映射本地目录到container
+      - ../:/home/worker/data/www
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8001:8001"
+    depends_on:                        #依赖服务
+      - mysql
+    links:                             #链接另一个服务
+      - mysql:db
+
+  adminer:                             #数据库可视化管理服务
+    image: adminer
+    container_name: adminer
+    ports:
+    - "8081:8081"
+    depends_on:                        #服务依赖
+    - mysql
+    links:                             #链接另一个服务
+    - mysql:db
+
+  mysql:                              #数据库服务
+    image: mysql:5.7                  #使用官方镜像
+    container_name: mysql             #容器名
+    volumes:
+    - ./docker/mysql/data:/var/lib/mysql
+    ports:                             # 映射端口
+    - "3307:3306"
+    environment:
+    - MYSQL_ROOT_PASSWORD=123456
+    - MYSQL_DATABASE=payway
+
+        
