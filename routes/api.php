@@ -13,6 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('client')->get('/user', function (Request $request) {
-    return $request->bearerToken();
-});
+Route::middleware('client')->get('/user', 'UserController@index');
