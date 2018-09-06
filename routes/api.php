@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -12,5 +13,15 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+/**
+ * Laravel Signed Routes
+ * 路由定义与参数作签名，签名方法需要定义路由名称
+ */
+Route::middleware(['client'])->get('/user', 'UserController@index')->name('api.user');
 
-Route::middleware('client')->get('/user', 'UserController@index');
+/**
+ * Laravel Signed Routes
+ * 1. 定义好路由名称
+ * 2. 定义好APP_KEY
+ */
+Route::middleware(['client'])->get('/signature', 'UserController@sign');
