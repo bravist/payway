@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class CreateChannelPayWaysTable extends Migration
 {
@@ -17,6 +18,7 @@ class CreateChannelPayWaysTable extends Migration
             $table->increments('id');
             $table->timestamps();
         });
+        DB::statement("ALTER TABLE `channel_pay_ways` comment '支付渠道付款方式'");
     }
 
     /**

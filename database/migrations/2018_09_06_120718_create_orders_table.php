@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class CreateOrdersTable extends Migration
 {
@@ -17,6 +18,7 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->timestamps();
         });
+        DB::statement("ALTER TABLE `orders` comment '支付订单'");
     }
 
     /**

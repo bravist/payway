@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class CreateChannelsTable extends Migration
 {
@@ -17,6 +18,7 @@ class CreateChannelsTable extends Migration
             $table->increments('id');
             $table->timestamps();
         });
+        DB::statement("ALTER TABLE `channels` comment '支付渠道'");
     }
 
     /**

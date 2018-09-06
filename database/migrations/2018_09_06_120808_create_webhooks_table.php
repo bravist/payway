@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class CreateWebhooksTable extends Migration
 {
@@ -17,6 +18,7 @@ class CreateWebhooksTable extends Migration
             $table->increments('id');
             $table->timestamps();
         });
+        DB::statement("ALTER TABLE `webhooks` comment '业务系统异步通知日志'");
     }
 
     /**
