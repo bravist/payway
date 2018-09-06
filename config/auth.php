@@ -42,7 +42,7 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'passport',
             'provider' => 'users',
         ],
     ],
@@ -97,6 +97,17 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
         ],
+    ],
+
+    /**
+     * Passport token expired times
+     * access_token
+     * refresh_token
+     */
+    
+    'passport' => [
+        'access_token_expired_seconds' => env('ACCESS_TOKEN_EXPIRED_SECONDS', 60),
+        'refresh_token_expired_seconds' => env('REFRESH_TOKEN_EXPIRED_SECONDS', 600),
     ],
 
 ];
