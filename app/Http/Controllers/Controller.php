@@ -52,6 +52,4 @@ class Controller extends BaseController
             throw new AuthenticationException;
         }
     }
-
-
 }
