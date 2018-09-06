@@ -10,8 +10,10 @@
         "laravel/framework": "5.6.*",
         "laravel/passport": "^7.0",
         "laravel/tinker": "^1.0",
+        "noh4ck/graphiql": "@dev",
         "overtrue/laravel-wechat": "~4.0",
-        "predis/predis": "^1.1"
+        "predis/predis": "^1.1",
+        "rebing/graphql-laravel": "~1.14"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
