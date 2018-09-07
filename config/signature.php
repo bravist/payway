@@ -1,6 +1,11 @@
 <?php
 
 return [
+
+    /**
+     *Debug
+     */
+    'debug' => env('SIGNATURE_DEBUG', true),
     // default signer
     'default' => env('SIGNATURE_DRIVER', 'hmac'),
     'hmac' => [
