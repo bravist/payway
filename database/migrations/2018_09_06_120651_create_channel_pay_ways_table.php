@@ -26,7 +26,7 @@ class CreateChannelPayWaysTable extends Migration
             $table->float('refund_rate')->comment('退款费率');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `channel_pay_ways` comment '支付渠道付款方式'");
+        DB::statement("ALTER TABLE `payment_channel_pay_ways` comment '支付渠道付款方式'");
     }
 
     /**

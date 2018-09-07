@@ -26,7 +26,7 @@ class CreateChannelWebhooksTable extends Migration
             $table->string('response')->nullable()->comment('响应内容');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `channel_webhooks` comment ' 支付渠道异步通知日志'");
+        DB::statement("ALTER TABLE `payment_channel_webhooks` comment ' 支付渠道异步通知日志'");
     }
 
     /**

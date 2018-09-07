@@ -29,7 +29,7 @@ class CreateRefundsTable extends Migration
             $table->string('error')->nullable()->comment('失败原因');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `refunds` comment '退款单'");
+        DB::statement("ALTER TABLE `payment_refunds` comment '退款单'");
     }
 
     /**

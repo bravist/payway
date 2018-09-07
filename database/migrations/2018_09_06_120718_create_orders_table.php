@@ -36,7 +36,7 @@ class CreateOrdersTable extends Migration
             $table->timestamps();
             $table->unique('unique_order', ['trade_no', 'out_trade_no', 'payment_channel_id', 'status']);
         });
-        DB::statement("ALTER TABLE `orders` comment '支付订单'");
+        DB::statement("ALTER TABLE `payment_orders` comment '支付订单'");
     }
 
     /**

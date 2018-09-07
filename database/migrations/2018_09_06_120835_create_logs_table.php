@@ -23,7 +23,7 @@ class CreateLogsTable extends Migration
             $table->timestamps();
             $table->unique('logger', ['event', 'logger_id', 'logger_type']);
         });
-        DB::statement("ALTER TABLE `logs` comment '支付订单日志'");
+        DB::statement("ALTER TABLE `payment_logs` comment '支付订单日志'");
     }
 
     /**

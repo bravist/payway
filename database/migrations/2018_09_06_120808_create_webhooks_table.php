@@ -29,7 +29,7 @@ class CreateWebhooksTable extends Migration
             $table->unsignedTinyInteger('status')->index()->default(0)->comment('通知结果\n0 待通知\n1 通知成功\n2 通知失败');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `webhooks` comment '业务系统异步通知日志'");
+        DB::statement("ALTER TABLE `payment_webhooks` comment '业务系统异步通知日志'");
     }
 
     /**
