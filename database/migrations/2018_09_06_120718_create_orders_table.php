@@ -34,7 +34,7 @@ class CreateOrdersTable extends Migration
             $table->timestamp('expired_at')->index()->nullable()->comment('订单过期时间');
             $table->unsignedTinyInteger('status')->index()->default(0)->comment('状态\n0 待支付\n1 支付成功\n2 支付失败');
             $table->timestamps();
-            $table->unique('unique_order', ['trade_no', 'out_trade_no', 'payment_channel_id', 'status']);
+            $table->unique(['trade_no', 'out_trade_no', 'payment_channel_id', 'status'], 'uniqid_order');
         });
         DB::statement("ALTER TABLE `payment_orders` comment '支付订单'");
     }

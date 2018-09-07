@@ -21,7 +21,7 @@ class CreateLogsTable extends Migration
             $table->string('logger_type')->comment('日志多态类型');
             $table->json('context')->nullable()->comment('请求内容');
             $table->timestamps();
-            $table->unique('logger', ['event', 'logger_id', 'logger_type']);
+            $table->unique(['event', 'logger_id', 'logger_type'], 'logger');
         });
         DB::statement("ALTER TABLE `payment_logs` comment '支付订单日志'");
     }
