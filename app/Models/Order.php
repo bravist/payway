@@ -28,4 +28,23 @@ class Order extends Model
     {
         return $this->belongsTo(Channel::class, 'payment_channel_id');
     }
+
+    /**
+     * Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function logs()
+    {
+        return $this->morphMany(Log::class, 'logger');
+    }
+
+    /**
+     * Many To Many Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function events()
+    {
+        return $this->morphToMany(Event::class, 'logger', 'payment_logs', null, 'payment_event_id');
+    }
+
 }

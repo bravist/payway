@@ -19,4 +19,22 @@ class Event extends Model
      * @var string
      */
     protected $table = 'payment_events';
+
+    /**
+     * Many To Many Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function orders()
+    {
+        return $this->morphedByMany(Order::class, 'logger');
+    }
+
+    /**
+     * Many To Many Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function refunds()
+    {
+        return $this->morphedByMany(Refund::class, 'logger');
+    }
 }
