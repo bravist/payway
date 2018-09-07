@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Refund extends Model
+class Event extends Model
 {
     /**
      * The attributes that aren't mass assignable.
@@ -18,24 +18,23 @@ class Refund extends Model
      *
      * @var string
      */
-    protected $table = 'payment_refunds';
+    protected $table = 'payment_events';
 
     /**
-     * Polymorphic Relations
+     * Many To Many Polymorphic Relations
      * @return [type] [description]
      */
-    public function logs()
+    public function orders()
     {
-        return $this->morphMany(Log::class, 'logger');
+        return $this->morphedByMany(Order::class, 'logger');
     }
 
     /**
      * Many To Many Polymorphic Relations
      * @return [type] [description]
      */
-    public function events()
+    public function refunds()
     {
-        return $this->morphToMany(Event::class, 'logger', 'payment_logs', null, 'payment_event_id');
+        return $this->morphedByMany(Refund::class, 'logger');
     }
-    
 }
