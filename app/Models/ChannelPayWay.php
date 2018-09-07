@@ -19,4 +19,13 @@ class ChannelPayWay extends Model
      * @var string
      */
     protected $table = 'payment_channel_pay_ways';
+
+    /**
+     * Channel has own channel pay way
+     * @return App\Models\Channel
+     */
+    public function channel()
+    {
+        return $this->belongsTo(Channel::class, 'payment_channel_id');
+    }
 }

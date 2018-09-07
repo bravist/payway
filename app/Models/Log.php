@@ -19,4 +19,13 @@ class Log extends Model
      * @var string
      */
     protected $table = 'payment_logs';
+
+    /**
+     * 多态定义
+     * @return [type] [description]
+     */
+    public function logger()
+    {
+        return $this->morphTo();
+    }
 }
