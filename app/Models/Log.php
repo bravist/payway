@@ -12,4 +12,11 @@ class Log extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'payment_logs';
 }

@@ -14,8 +14,16 @@ class CreateChannelPayWaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('channel_pay_ways', function (Blueprint $table) {
+        Schema::create('payment_channel_pay_ways', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('payment_channel_id')->default(0)->comment('支付渠道ID');
+            $table->unsignedTinyInteger('way')->default(0)->comment('支付方式');
+            $table->string('merchant_id', 45)->comment('渠道商户号');
+            $table->string('app_id', 45)->comment('支付网关APP_ID');
+            $table->string('app_secret')->comment('支付主体APP密钥');
+            $table->string('certficate')->comment('支付主体证书');
+            $table->string('key')->comment('支付主体密钥');
+            $table->float('refund_rate')->comment('退款费率');
             $table->timestamps();
         });
         DB::statement("ALTER TABLE `channel_pay_ways` comment '支付渠道付款方式'");

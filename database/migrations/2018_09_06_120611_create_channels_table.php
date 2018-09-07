@@ -14,7 +14,7 @@ class CreateChannelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('channels', function (Blueprint $table) {
+        Schema::create('payment_channels', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('client_id')->default(0)->comment('客户端ID');
             $table->unsignedTinyInteger('channel')->default(0)->comment('支付渠道类型')
