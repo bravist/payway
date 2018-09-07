@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Liyu\Signature\Facade\Signature;
 
 class UserController extends Controller
 {
@@ -25,7 +26,8 @@ class UserController extends Controller
      */
     public function sign()
     {
-        return URL::signedRoute('api.user');
+        // return URL::signedRoute('api.user');
+        return Signature::sign([]);
     }
 
     /**

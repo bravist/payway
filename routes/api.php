@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,7 +16,7 @@ use Illuminate\Http\Request;
  * Laravel Signed Routes
  * 路由定义与参数作签名，签名方法需要定义路由名称
  */
-Route::middleware(['client'])->get('/user', 'UserController@index')->name('api.user');
+Route::middleware(['client', 'api.signed'])->get('/user', 'UserController@index')->name('api.user');
 
 /**
  * Laravel Signed Routes
