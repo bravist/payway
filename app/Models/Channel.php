@@ -19,4 +19,13 @@ class Channel extends Model
      * @var string
      */
     protected $table = 'payment_channels';
+
+    /**
+     * Channel has many pay ways
+     * @return App\Models\channelPayWay
+     */
+    public function channelPayWays()
+    {
+        return $this->hasMany(ChannelPayWay::class, 'payment_channel_id');
+    }
 }
