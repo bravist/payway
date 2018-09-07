@@ -20,7 +20,11 @@ class VerifyApiSignature
 
         try {
             if (config('signature.debug')) {
-                if (!Signature::verify($request->sign)) {
+                $signSecretType = sprintf('signature.%s.options.key', $request->sign_type);
+                logger($signSecretType, [':sign_secret_type']);
+                logger($request->sign, [':signature']);
+                logger($request->except(['sign', 'sign_type']), [':sign_data']);
+                if (!Signature::setKey(config($signSecretType))->verify($request->sign, $request->except(['sign', 'sign_type']))) {
                     throw new AuthenticationException;
                 }
             }
