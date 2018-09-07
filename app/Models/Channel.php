@@ -28,4 +28,13 @@ class Channel extends Model
     {
         return $this->hasMany(ChannelPayWay::class, 'payment_channel_id');
     }
+
+    /**
+     * Channel has many orders
+     * @return App\Models\Order
+     */
+    public function orders()
+    {
+        return $this->hasMay(Order::class, 'payment_channel_id');
+    }
 }

@@ -22,7 +22,7 @@ class ChannelPayWay extends Model
 
     /**
      * Channel has own channel pay way
-     * @return [type] [description]
+     * @return App\Models\Channel
      */
     public function channel()
     {

@@ -19,4 +19,13 @@ class Order extends Model
      * @var string
      */
     protected $table = 'payment_orders';
+
+     /**
+     * Order has own Channel
+     * @return App\Models\Channel
+     */
+    public function channel()
+    {
+        return $this->belongsTo(Channel::class, 'payment_channel_id');
+    }
 }
