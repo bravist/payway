@@ -67,6 +67,12 @@ class PaymentEventsTableSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            [
+                'name' => 'external_query_order',
+                'desc' => '查询网关渠道订单状态',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ];
         collect($defaults)->each(function ($default) {
             DB::table('payment_events')->insert($default);
