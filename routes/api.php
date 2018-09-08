@@ -17,10 +17,17 @@ use Illuminate\Http\Request;
  * 路由定义与参数作签名，签名方法需要定义路由名称
  */
 Route::middleware(['client', 'api.signed'])->get('/user', 'UserController@index')->name('api.user');
-
 /**
  * Laravel Signed Routes
  * 1. 定义好路由名称
  * 2. 定义好APP_KEY
  */
 Route::middleware(['client'])->get('/signature', 'UserController@sign');
+/**
+ * Functional apis
+ */
+Route::namespace('Api')
+        ->middleware(['client', 'api.signed'])
+        ->group(function () {
+            Route::post('orders', 'OrderController@store')->name('api.orders');
+        });
