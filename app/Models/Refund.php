@@ -37,5 +37,4 @@ class Refund extends Model
     {
         return $this->morphToMany(Event::class, 'logger', 'payment_logs', null, 'payment_event_id');
     }
-    
 }

@@ -17,7 +17,7 @@ class CreateChannelPayWaysTable extends Migration
         Schema::create('payment_channel_pay_ways', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('payment_channel_id')->default(0)->comment('支付渠道ID');
-            $table->unsignedTinyInteger('way')->default(0)->comment('支付方式');
+            $table->string('way', 10)->comment('支付方式');
             $table->string('merchant_id', 45)->comment('渠道商户号');
             $table->string('app_id', 45)->comment('支付网关APP_ID');
             $table->string('app_secret')->comment('支付主体APP密钥');
