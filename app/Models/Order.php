@@ -79,6 +79,6 @@ class Order extends Model
             self::PAY_STATUS_CLOSED => 3,
             self::PAY_STATUS_CANELED => 4
         ];
-        return $status === true  ? $list : $list[$index];
+        return $index === false  ? $list : $list[$index];
     }
 }

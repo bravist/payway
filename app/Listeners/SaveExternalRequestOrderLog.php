@@ -6,6 +6,7 @@ use App\Events\ExternalRequestOrder;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Log;
+use App\Models\Event;
 
 class SaveExternalRequestOrderLog
 {
@@ -35,7 +36,7 @@ class SaveExternalRequestOrderLog
             'logger_type' => $event->order->getMorphClass(),
             'request_url' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
             'request' => json_encode($event->request),
-            'response' => $event->response
+            'response' => json_encode($event->response)
         ]);
     }
 }

@@ -24,7 +24,7 @@ class ExternalRequestOrder
      *
      * @return void
      */
-    public function __construct(Order $order, array $request, string $response)
+    public function __construct(Order $order, $request, $response)
     {
         $this->order = $order;
         $this->request = $request;

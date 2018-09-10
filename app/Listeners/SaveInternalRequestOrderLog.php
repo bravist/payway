@@ -36,7 +36,7 @@ class SaveInternalRequestOrderLog
             'logger_id' => $event->order->id,
             'logger_type' => $event->order->getMorphClass(),
             'request_url' => $event->request->fullUrl(),
-            'request' => json_encode($request->all()),
+            'request' => json_encode($event->request->all()),
             'response' => ''
         ]);
     }

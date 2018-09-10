@@ -38,15 +38,15 @@ class OrderController extends Controller
                 case Order::CHANNEL_PAY_WAY_WECHAT_MINI:
                         $response = $this->payWechatMini($order, $params);
                         //创建生成小程序支付请求日志
-                        Event::fire(new ExternalRequestOrder($order, $request, $response));
+                        Event::fire(new ExternalRequestOrder($order, $params, $response));
                     break;
             }
             //更新订单状态
             $order->update([
                 'status' => Order::reverseStatus(Order::PAY_STATUS_PROCESSING)
             ]);
-            return $response;
             DB::commit();
+            return $response;
         } catch (\Exception $e) {
             DB::rollBack();
         }
@@ -113,7 +113,7 @@ class OrderController extends Controller
             'body' => $order->body,
             'out_trade_no' => $order->trade_no,
             'total_fee' => $order->amount,
-            'trade_type' => 'JSAPI',
+            'trade_type' => 'MWEB',
             'notify_url' => config('wechat.payment.default.notify_url')
         ];
         return $app->order->unify($params);
