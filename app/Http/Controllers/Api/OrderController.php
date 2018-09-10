@@ -44,8 +44,9 @@ class OrderController extends Controller
             }
             //更新订单状态
             $order->update([
-                'status' => Order::
+                'status' => Order::reverseStatus(Order::PAY_STATUS_PROCESSING);
             ]);
+            return $response;
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

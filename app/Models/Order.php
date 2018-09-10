@@ -70,7 +70,7 @@ class Order extends Model
      * @param  boolean $index [description]
      * @return [type]         [description]
      */
-    public function reverseStatus($index = false)
+    public static function reverseStatus($index = false)
     {
         $list = [
             self::PAY_STATUS_PENDING => 0
