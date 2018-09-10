@@ -16,6 +16,10 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Event' => [
             'App\Listeners\EventListener',
         ],
+        //创建订单请求日志（业务系统请求网关）监听器
+        'App\Events\InternalRequestOrder' => [
+            'App\Listeners\SaveInternalRequestOrderLog',
+        ]
     ];
 
     /**

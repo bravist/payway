@@ -1,3 +1,22 @@
+## Deploy
+1. Create migration
+```php
+php artisan migrate
+```
+2. Import default payment events
+```php
+php artisan db:seed --class=PaymentEventsTableSeeder
+```
+3. Generate passport key
+```php
+php artisan passport:keys
+```
+4. Generate default test OAuth2.0 Client Credential (please create a user before it).
+```php
+php artisan passport:client
+```
+
+
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 <p align="center">
