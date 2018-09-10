@@ -15,6 +15,7 @@ php artisan passport:keys
 ```php
 php artisan passport:client
 ```
+5. Eevriment
 
 
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>

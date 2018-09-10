@@ -65,4 +65,20 @@ class Order extends Model
         return $this->morphToMany(Event::class, 'logger', 'payment_logs', null, 'payment_event_id');
     }
 
+    /**
+     * Reverse status
+     * @param  boolean $index [description]
+     * @return [type]         [description]
+     */
+    public function reverseStatus($index = false)
+    {
+        $list = [
+            self::PAY_STATUS_PENDING => 0
+            self::PAY_STATUS_PROCESSING => 1,
+            self::PAY_STATUS_SUCCESS => 2,
+            self::PAY_STATUS_CLOSED => 3,
+            self::PAY_STATUS_CANELED => 4
+        ];
+        return $status === true  ? $list : $list[$index];
+    }
 }

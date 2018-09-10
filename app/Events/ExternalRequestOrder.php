@@ -9,25 +9,26 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use App\Http\Requests\Api\OrderRequest;
 use App\Models\Order;
 
-class InternalRequestOrder
+class ExternalRequestOrder
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $request;
+    public $response;
     public $order;
-    
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(OrderRequest $request, Order $order)
+    public function __construct(Order $order, array $request, string $response)
     {
-        $this->request = $request;
         $this->order = $order;
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**

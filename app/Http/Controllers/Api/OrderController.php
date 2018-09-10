@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Channel;
 use App\Models\ChannelPayWay;
 use Carbon\Carbon;
+use App\Events\InternalRequestOrder;
+use App\Events\ExternalRequestOrder;
+use EasyWeChat\Factory;
+use Illuminate\Support\Facades\Event;
+
 
 class OrderController extends Controller
 {
@@ -20,11 +25,27 @@ class OrderController extends Controller
      */
     public function store(OrderRequest $request)
     {
-        //生成订单
+        $params = [];
+        //接收创建订单参数
+        //验证签名
         try {
             DB::beginTransaction();
+            //生成新订单
             $order = $this->createOrder($request);
-
+            //创建生成新订单请求日志
+            Event::fire(new InternalRequestOrder($request, $order));
+            //创建渠道订单请求
+            switch ($request->pay_way) {
+                case Order::CHANNEL_PAY_WAY_WECHAT_MINI:
+                        $response = $this->payWechatMini($order, $params);
+                        //创建生成小程序支付请求日志
+                        Event::fire(new ExternalRequestOrder($order, $request, $response));
+                    break;
+            }
+            //更新订单状态
+            $order->update([
+                'status' => Order::
+            ]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -73,4 +94,28 @@ class OrderController extends Controller
         return $order;
     }
 
+    /**
+     * Pay wechat mini_program
+     * @param  Order  $order   [description]
+     * @param  array  &$params [description]
+     * @return [type]          [description]
+     */
+    public function payWechatMini(Order $order, &$params = [])
+    {
+        $config = [
+            // 必要配置
+            'app_id'             => config('wechat.payment.default.app_id'),
+            'mch_id'             => config('wechat.payment.default.mch_id'),
+            'key'                => config('wechat.payment.default.key'),   // API 密钥
+        ];
+        $app = Factory::payment($config);
+        $params = [
+            'body' => $order->body,
+            'out_trade_no' => $order->trade_no,
+            'total_fee' => $order->amount,
+            'trade_type' => 'JSAPI',
+            'notify_url' => config('wechat.payment.default.notify_url')
+        ];
+        return $app->order->unify($params);
+    }
 }
