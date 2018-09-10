@@ -51,7 +51,7 @@ class OrderRequest extends FormRequest
             'out_trade_no.required' => '外部订单号不能为空',
             'out_trade_no.max' => '外部订单号最大支持64个字符',
             'out_trade_no.unique' => '外部订单号重复',
-            'subject.required' => '支付标题不能为空'
+            'subject.required' => '支付标题不能为空',
             'subject.max' => '支付标题最大支持255个字符',
             'amount.required' => '订单金额最大支持255个字符',
             'amount.integer' => '订单金额仅支持数字',
