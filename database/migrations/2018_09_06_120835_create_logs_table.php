@@ -19,7 +19,9 @@ class CreateLogsTable extends Migration
             $table->unsignedTinyInteger('payment_event_id')->index()->default(0)->comment('日志事件ID');
             $table->unsignedInteger('logger_id')->default(0)->comment('日志多态类型ID');
             $table->string('logger_type')->comment('日志多态类型');
-            $table->text('context')->nullable()->comment('内容');
+            $table->string('request_url')->nullable()->comment('请求URL');
+            $table->text('request')->nullable()->comment('请求内容');
+            $table->text('response')->nullable()->comment('响应内容');
             $table->timestamps();
             $table->unique(['payment_event_id', 'logger_id', 'logger_type'], 'logger');
         });
