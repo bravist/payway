@@ -17,14 +17,14 @@ class VerifyApiSignature
      */
     public function handle($request, Closure $next)
     {
-
         try {
             if (config('signature.debug')) {
                 $signSecretType = sprintf('signature.%s.options.key', $request->sign_type);
                 logger($signSecretType, [':sign_secret_type']);
                 logger($request->sign, [':signature']);
                 logger($request->except(['sign', 'sign_type']), [':sign_data']);
-                if (!Signature::setKey(config($signSecretType))->verify($request->sign, $request->except(['sign', 'sign_type']))) {
+                if (!Signature::setKey(config($signSecretType))
+                    ->verify($request->sign, $request->except(['sign', 'sign_type']))) {
                     throw new AuthenticationException;
                 }
             }

@@ -25,18 +25,18 @@ class OrderRequest extends FormRequest
     {
         switch ($this->method()) {
             case 'POST':
-                    return [
-                        'out_trade_no' => 'bail|required|max:64|unique:payment_orders,out_trade_no',
-                        'subject' => 'bail|required|max:255',
-                        'amount' => 'bail|required|integer|min:1|max:1000000000',
-                        'pay_way' => 'bail|required|string|exists:payment_channel_pay_way,way',
-                        'detail' => 'bail|max:255',
-                        'buyer' => 'max:255',
-                        'seller' => 'max:255',
-                        'body' => 'max:255',
-                        'goods_detail' => 'max:255',
-                        'notify_url' => 'bail|required|url',
-                    ];
+                return [
+                    'out_trade_no' => 'bail|required|max:64|unique:payment_orders,out_trade_no',
+                    'subject' => 'bail|required|max:255',
+                    'amount' => 'bail|required|integer|min:1|max:1000000000',
+                    'pay_way' => 'bail|required|string|exists:payment_channel_pay_way,way',
+                    'detail' => 'bail|max:255',
+                    'buyer' => 'max:255',
+                    'seller' => 'max:255',
+                    'body' => 'max:255',
+                    'goods_detail' => 'max:255',
+                    'notify_url' => 'bail|required|url',
+                ];
                 break;
             
             default:

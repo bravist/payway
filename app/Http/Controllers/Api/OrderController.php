@@ -15,7 +15,6 @@ use App\Events\ExternalRequestOrder;
 use EasyWeChat\Factory;
 use Illuminate\Support\Facades\Event;
 
-
 class OrderController extends Controller
 {
     /**
@@ -44,7 +43,7 @@ class OrderController extends Controller
             }
             //更新订单状态
             $order->update([
-                'status' => Order::reverseStatus(Order::PAY_STATUS_PROCESSING);
+                'status' => Order::reverseStatus(Order::PAY_STATUS_PROCESSING)
             ]);
             return $response;
             DB::commit();
@@ -60,7 +59,7 @@ class OrderController extends Controller
      * @return [type]          [description]
      */
     protected function createOrder($request)
-    {   
+    {
         $token = $this->retrieveTokenByRequest($request);
         $channel = Channel::where('client_id', $token->client_id)->first();
         $payWay = ChannelPayWay::where('payment_channel_id', $channel->id)->where('way', $request->pay_way)->first();
@@ -85,8 +84,8 @@ class OrderController extends Controller
         ]);
         //订单号生成并回写
         $orderNo = sprintf(
-            '%s%s', 
-            Carbon::now()->timezone('Asia/Shanghai')->format('YmdHis'), 
+            '%s%s',
+            Carbon::now()->timezone('Asia/Shanghai')->format('YmdHis'),
             str_pad($order->id, 4, 0, STR_PAD_LEFT)
         );
         $order->update([
