@@ -36,7 +36,7 @@ class OrderController extends Controller
                                     ->where('way', $request->pay_way)
                                     ->first();
             $order = Order::where('out_trade_no', $request->out_trade_no)
-                            ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANELED])
+                            ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANCELED])
                             ->orderBy('created_at', 'desc')
                             ->first();
             if ($order) {

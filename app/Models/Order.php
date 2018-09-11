@@ -18,7 +18,7 @@ class Order extends Model
     const PAY_STATUS_PROCESSING = 'processing';
     const PAY_STATUS_SUCCESS = 'success';
     const PAY_STATUS_CLOSED = 'closed';
-    const PAY_STATUS_CANELED = 'caneled';
+    const PAY_STATUS_CANCELED = 'canceled';
 
     const REFUND_STATUS_PROCESSING = 'processing';
     const REFUND_STATUS_SUCCESS = 'success';
