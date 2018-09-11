@@ -14,6 +14,7 @@ use App\Events\InternalRequestOrder;
 use App\Events\ExternalRequestOrder;
 use Illuminate\Support\Facades\Event;
 use App\Services\WechatMwebService;
+use App\Http\Resources\OrderResource;
 
 class OrderController extends Controller
 {
@@ -27,33 +28,51 @@ class OrderController extends Controller
         $params = $response = [];
         //接收创建订单参数
         //验证签名
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             $token = $this->retrieveTokenByRequest($request);
             $channel = Channel::where('client_id', $token->client_id)->first();
             $payWay = ChannelPayWay::where('payment_channel_id', $channel->id)
                                     ->where('way', $request->pay_way)
                                     ->first();
-            //生成新订单
-            $order = $this->createOrder($request, $channel, $payWay);
+            //订单是否过期
+            $order = Order::where('out_trade_no', $request->out_trade_no)
+                            ->where('status', Order::PAY_STATUS_PROCESSING)
+                            ->first();
+            if ($order) {
+                // logger(Carbon::now());
+                // logger($order->expired_at);
+                // logger(Carbon::now()->gte($order->expired_at));
+
+                if (Carbon::now()->gte($order->expired_at)) {
+                    $order = $this->createOrder($request, $channel, $payWay);
+                } else {
+                    //返回预付单信息
+                    return new OrderResource($order);
+                }
+            } else {
+                //生成新订单
+                $order = $this->createOrder($request, $channel, $payWay);
+            }
             //创建生成新订单请求日志
             Event::fire(new InternalRequestOrder($request, $order));
             //创建渠道订单请求
             switch ($request->pay_way) {
                 case Order::CHANNEL_PAY_WAY_WECHAT_MWEB:
-                        $payment = new WechatMwebService($order, $channel, $payWay);
-                        $response = $payment->pay($params);
+                    $payment = new WechatMwebService($order, $channel, $payWay);
+                    $response = $payment->pay($params);
                     break;
             }
             //创建生成小程序支付请求日志
             Event::fire(new ExternalRequestOrder($order, $params, $response));
             //更新订单状态
             $order->update([
-                'status' => Order::reverseStatus(Order::PAY_STATUS_PROCESSING)
+                'status' => Order::PAY_STATUS_PROCESSING
             ]);
             DB::commit();
-            return $response;
+            return new OrderResource($order);
         } catch (\Exception $e) {
+            logger($e);
             DB::rollBack();
         }
         //创建订单请求日志（业务系统请求网关）监听器

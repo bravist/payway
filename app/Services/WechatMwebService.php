@@ -29,6 +29,6 @@ class WechatMwebService extends PaymentService
             'trade_type' => 'MWEB',
             'notify_url' => $this->channel->notify_url
         ];
-        return $app->this->order->unify($params);
+        return $app->order->unify($params);
     }
 }

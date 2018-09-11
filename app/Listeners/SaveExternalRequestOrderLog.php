@@ -10,7 +10,6 @@ use App\Models\Event;
 
 class SaveExternalRequestOrderLog
 {
-    const EVENT_NAME = 'external_request_order';
     /**
      * Create the event listener.
      *
@@ -29,7 +28,7 @@ class SaveExternalRequestOrderLog
      */
     public function handle(ExternalRequestOrder $event)
     {
-        $paymentEvent = Event::where('name', self::EVENT_NAME)->first();
+        $paymentEvent = Event::where('name', Event::EXTERNAL_REQUEST_ORDER)->first();
         Log::create([
             'payment_event_id' => $paymentEvent->id,
             'logger_id' => $event->order->id,
