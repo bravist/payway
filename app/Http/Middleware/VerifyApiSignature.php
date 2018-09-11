@@ -19,8 +19,7 @@ class VerifyApiSignature
     {
         try {
             if (config('signature.debug')) {
-
-                if (! $request->has('sign') 
+                if (! $request->has('sign')
                     || empty($request->sign)
                     || !$request->has('sign_type')
                     || empty($request->sign_type)) {
