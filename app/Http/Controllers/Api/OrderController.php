@@ -14,6 +14,7 @@ use App\Events\InternalRequestOrder;
 use App\Events\ExternalRequestOrder;
 use Illuminate\Support\Facades\Event;
 use App\Services\WechatMwebService;
+use App\Services\WechatMiniService;
 use App\Http\Resources\OrderResource;
 
 class OrderController extends Controller
@@ -37,6 +38,8 @@ class OrderController extends Controller
                                     ->first();
             $order = Order::where('out_trade_no', $request->out_trade_no)
                             ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANCELED])
+                            ->where('payment_channel_id', $channel->id)
+                            ->where('payment_channel_pay_way_id', $payWay->id)
                             ->orderBy('created_at', 'desc')
                             ->first();
             if ($order) {
@@ -61,6 +64,10 @@ class OrderController extends Controller
             switch ($request->pay_way) {
                 case Order::CHANNEL_PAY_WAY_WECHAT_MWEB:
                     $payment = new WechatMwebService($order, $channel, $payWay);
+                    $response = $payment->pay($params);
+                    break;
+                case Order::CHANNEL_PAY_WAY_WECHAT_MINI:
+                    $payment = new WechatMiniService($order, $channel, $payWay);
                     $response = $payment->pay($params);
                     break;
             }

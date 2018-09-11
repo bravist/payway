@@ -26,7 +26,7 @@ class WechatMiniService extends PaymentService
             'body' => $this->order->body,
             'out_trade_no' => $this->order->trade_no,
             'total_fee' => $this->order->amount,
-            'trade_type' => 'MWEB',
+            'trade_type' => 'JSAPI',
             'notify_url' => $this->channel->notify_url
         ];
         return $app->order->unify($params);
