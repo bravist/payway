@@ -43,9 +43,9 @@ class OrderController extends Controller
                             ->orderBy('created_at', 'desc')
                             ->first();
             if ($order) {
-                //订单是否支付成功
+                //订单是否支的付成功
                 if ($order->status == Order::PAY_STATUS_SUCCESS) {
-                    abort(404, '订单已经支付成功');
+                    abort(403, '订单已经支付成功');
                 }
                 //订单是否过期
                 if (Carbon::now()->gte($order->expired_at)) {
