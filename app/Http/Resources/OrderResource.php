@@ -14,9 +14,6 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        $array = parent::toArray($request);
-        return $array;
-        $array['prepay'] = '';
-        return $array;
+        return parent::toArray($request);
     }
 }
