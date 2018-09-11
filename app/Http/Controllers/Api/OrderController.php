@@ -35,15 +35,16 @@ class OrderController extends Controller
             $payWay = ChannelPayWay::where('payment_channel_id', $channel->id)
                                     ->where('way', $request->pay_way)
                                     ->first();
-            //订单是否过期
             $order = Order::where('out_trade_no', $request->out_trade_no)
-                            ->where('status', Order::PAY_STATUS_PROCESSING)
+                            ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANELED])
+                            ->orderBy('created_at', 'desc')
                             ->first();
             if ($order) {
-                // logger(Carbon::now());
-                // logger($order->expired_at);
-                // logger(Carbon::now()->gte($order->expired_at));
-
+                //订单是否支付成功
+                if ($order->status == Order::PAY_STATUS_SUCCESS) {
+                    abort(404, '订单已经支付成功');
+                }
+                //订单是否过期
                 if (Carbon::now()->gte($order->expired_at)) {
                     $order = $this->createOrder($request, $channel, $payWay);
                 } else {
