@@ -85,10 +85,10 @@ class QueryChannelOrderStatus extends Command
                 $order->update([
                     'status' => Order::PAY_STATUS_CLOSED
                 ]);
-                Event::fire(new ExternalQueryOrder($order, ExternalQueryOrder::PAY_STATUS_EXPIRED, [$order->trade_no], $res)); 
-            } 
+                Event::fire(new ExternalQueryOrder($order, ExternalQueryOrder::PAY_STATUS_EXPIRED, [$order->trade_no], $res));
+            }
         } else {
-            Event::fire(new ExternalQueryOrder($order, ExternalQueryOrder::PAY_STATUS_QUERY, [$order->trade_no], $res));    
+            Event::fire(new ExternalQueryOrder($order, ExternalQueryOrder::PAY_STATUS_QUERY, [$order->trade_no], $res));
         }
     }
 }

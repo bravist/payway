@@ -16,10 +16,10 @@ class WebhookController extends Controller
     public function wechatNotify()
     {
         $app = Factory::payment();
-        $response = $app->handlePaidNotify(function($message, $fail){
+        $response = $app->handlePaidNotify(function ($message, $fail) {
             $order = Order::where('trade_no', $message['out_trade_no'])->first();
             Event::fire(new ExternalWebhook($order, [], $message));
-            if (! $order 
+            if (! $order
                 || $order->status == Order::PAY_STATUS_SUCCESS
                 || $order->status == Order::PAY_STATUS_CLOSED) {
                 return true;
@@ -58,5 +58,4 @@ class WebhookController extends Controller
         });
         return $response; // return $response;
     }
-
 }

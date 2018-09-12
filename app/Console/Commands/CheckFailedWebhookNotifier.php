@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use App\Models\Webhook;
 use App\Jobs\WebhookNotifier;
 
-
 class CheckFailedWebhookNotifier extends Command
 {
     /**
