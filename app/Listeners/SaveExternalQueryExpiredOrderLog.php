@@ -32,8 +32,8 @@ class SaveExternalQueryExpiredOrderLog
             $paymentEvent = Event::where('name', Event::EXTERNAL_QUERY_EXPIRED_ORDER)->first();
             Log::create([
                 'payment_event_id' => $paymentEvent->id,
-                'logger_id' => $event->order->id,
-                'logger_type' => $event->order->getMorphClass(),
+                'logger_id' => $event->logger->id,
+                'logger_type' => $event->logger->getMorphClass(),
                 'request_url' => 'https://api.mch.weixin.qq.com/pay/orderquery',
                 'request' => json_encode($event->request),
                 'response' => json_encode($event->response)

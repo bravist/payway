@@ -30,6 +30,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\ExternalWebhook' => [
             'App\Listeners\SaveExternalWebhookLog'
+        ],
+        'App\Events\InternalWebhook' => [
+            'App\Listeners\SaveInternalWebhookLog'
         ]
     ];
 

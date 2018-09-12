@@ -9,13 +9,12 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use App\Models\Order;
 
 class ExternalWebhook
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
+    public $logger;
     public $request;
     public $response;
 
@@ -24,9 +23,9 @@ class ExternalWebhook
      *
      * @return void
      */
-    public function __construct(Order $order, $request, $response)
+    public function __construct($logger, $request, $response)
     {
-        $this->order = $order;
+        $this->logger = $logger;
         $this->request = $request;
         $this->response = $response;
     }

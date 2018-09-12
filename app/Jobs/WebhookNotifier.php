@@ -7,19 +7,24 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use App\Models\Webhook;
+use App\Events\InternalWebhook;
+use Illuminate\Support\Facades\Event;
 
 class WebhookNotifier implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $webhook;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Webhook $webhook)
     {
-        //
+        $this->webhook = $webhook;
     }
 
     /**
@@ -29,6 +34,26 @@ class WebhookNotifier implements ShouldQueue
      */
     public function handle()
     {
-        //
+        try {
+            $params = json_decode($this->webhook->context, true);
+            $response = $client->post($this->webhook->notify_url, [
+                'form_params' => $params
+            ]);
+            $context = (string) $response->getBody();
+            Event::fire(new InternalWebhook($order, $params, $context));
+            if ($context == 'success') {
+                DB::transaction(function () use ($context) {
+                    $this->webhook->update([
+                        'status' => Webhook::STATUS_SUCCESS
+                    ]);
+                });
+            }
+        } catch (\Exception $e) {
+            DB::transaction(function () use ($context) {
+                $this->webhook->update([
+                    'status' => Webhook::STATUS_FAIL
+                ]);
+            });
+        }
     }
 }
