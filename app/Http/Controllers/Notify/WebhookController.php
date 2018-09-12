@@ -9,6 +9,7 @@ use App\Events\ExternalWebhook;
 use Illuminate\Support\Facades\Event;
 use App\Models\ChannelWebhook;
 use App\Models\Webhook;
+use App\Jobs\WebhookNotifier;
 
 class WebhookController extends Controller
 {
