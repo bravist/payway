@@ -31,3 +31,11 @@ Route::namespace('Api')
         ->group(function () {
             Route::post('orders', 'OrderController@store')->name('api.orders');
         });
+
+/**
+ * Wechat notify
+ */
+Route::namespace('Notify')
+		->group(function () {
+			Route::any('wechat/notify', 'WebHookController@wechatNotify');
+		});

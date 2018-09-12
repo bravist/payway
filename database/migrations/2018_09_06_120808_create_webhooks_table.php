@@ -25,7 +25,6 @@ class CreateWebhooksTable extends Migration
             $table->string('url')->nullable()->comment('通知URL');
             $table->text('context')->nullable()->comment('通知内容');
             $table->text('channel_context')->nullable()->comment('渠道通知内容');
-            $table->string('response')->nullable()->comment('响应内容');
             $table->unsignedTinyInteger('status')->index()->default(0)->comment('通知结果\n0 待通知\n1 通知成功\n2 通知失败');
             $table->timestamps();
         });

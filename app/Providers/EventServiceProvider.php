@@ -27,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SaveExternalQueryPaidOrderLog',
             'App\Listeners\SaveExternalQueryExpiredOrderLog',
             'App\Listeners\SaveExternalQueryOrderLog'
+        ],
+        'App\Events\ExternalWebhook' => [
+            'App\Listeners\SaveExternalWebhookLog'
         ]
     ];
 
