@@ -27,7 +27,9 @@ class WechatMwebService extends PaymentService
             'out_trade_no' => $this->order->trade_no,
             'total_fee' => $this->order->amount,
             'trade_type' => 'MWEB',
-            'notify_url' => $this->channel->notify_url
+            'notify_url' => $this->channel->notify_url,
+            'time_start' => $this->order->pay_at->format('YmdHis'),
+            'time_expire' => $this->order->expired_at->format('YmdHis')
         ];
         return $app->order->unify($params);
     }

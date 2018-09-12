@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    const CHANNEL_WECHAT = 'wechant';
+    const CHANNEL_WECHAT = 'wechat';
     const CHANNEL_ALIPAY = 'alipay';
 
     const CHANNEL_PAY_WAY_WECHAT_MINI = 'wechat_mini';
@@ -56,6 +56,15 @@ class Order extends Model
     public function logs()
     {
         return $this->morphMany(Log::class, 'logger');
+    }
+
+    /**
+     * Channel pay way
+     * @return [type] [description]
+     */
+    public function channelPayWay()
+    {
+        return $this->belongsTo(ChannelPayWay::class, 'payment_channel_pay_way_id');
     }
 
     /**

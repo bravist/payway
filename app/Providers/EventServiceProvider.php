@@ -22,6 +22,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\ExternalRequestOrder' => [
             'App\Listeners\SaveExternalRequestOrderLog'
+        ],
+        'App\Events\ExternalQueryOrder' => [
+            'App\Listeners\SaveExternalQueryPaidOrderLog',
+            'App\Listeners\SaveExternalQueryExpiredOrderLog',
+            'App\Listeners\SaveExternalQueryOrderLog'
         ]
     ];
 
