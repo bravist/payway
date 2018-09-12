@@ -7,6 +7,7 @@ use App\Events\ExternalQueryOrder;
 use EasyWeChat\Factory;
 use App\Models\Order;
 use Illuminate\Support\Facades\Event;
+use Carbon\Carbon;
 
 class QueryChannelOrderStatus extends Command
 {
@@ -53,7 +54,9 @@ class QueryChannelOrderStatus extends Command
             ->get()
             ->each(function ($order) {
                 if ($order->channel == Order::CHANNEL_WECHAT) {
-                    $this->queryWechatOrderStatus($order);
+                    if (Carbon::now()->gte($order->expired_at)) {
+                        $this->queryWechatOrderStatus($order);
+                    }
                 }
             });
     }
