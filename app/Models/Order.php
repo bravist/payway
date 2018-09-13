@@ -110,4 +110,22 @@ class Order extends Model
     {
         return $this->refunds()->where('status', Refund::STATUS_PROCESSING)->first();
     }
+
+    /**
+     * Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function webhooks()
+    {
+        return $this->morphMany(Webhook::class, 'webhookable');
+    }
+
+    /**
+     * Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function channelWebhooks()
+    {
+        return $this->morphMany(ChannelWebhook::class, 'webhookable');
+    }
 }

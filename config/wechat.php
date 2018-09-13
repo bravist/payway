@@ -115,7 +115,7 @@ return [
             'notify_url'         => env('WECHAT_PAYMENT_NOTIFY'),                           // 默认支付结果通知地址
         ],
         'refund' => [
-            'notify_url'        => env('WECHAT_REFUND_NOTIFY'),
+            'notify_url'        => env('WECHAT_REFUND_NOTIFY')
         ]
     ],
 

@@ -38,5 +38,6 @@ Route::namespace('Api')
  */
 Route::namespace('Notify')
         ->group(function () {
-            Route::any('wechat/notify', 'WebHookController@wechatNotify');
+            Route::any('wechat/payment/notify', 'WebHookController@wechatPaymentNotify');
+            Route::any('wechat/refund/notify', 'WebHookController@wechatRefundNotify');
         });

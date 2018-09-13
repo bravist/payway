@@ -51,4 +51,22 @@ class Refund extends Model
     {
         return $this->belongsTo(Order::class, 'payment_order_id');
     }
+
+    /**
+     * Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function webhooks()
+    {
+        return $this->morphMany(Webhook::class, 'webhookable');
+    }
+
+    /**
+     * Polymorphic Relations
+     * @return [type] [description]
+     */
+    public function channelWebhooks()
+    {
+        return $this->morphMany(ChannelWebhook::class, 'webhookable');
+    }
 }
