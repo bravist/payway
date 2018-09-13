@@ -11,11 +11,15 @@ use App\Models\Channel;
 use App\Models\ChannelPayWay;
 use Carbon\Carbon;
 use App\Events\InternalRequestOrder;
+use App\Events\InternalRequestRefund;
 use App\Events\ExternalRequestOrder;
+use App\Events\ExternalRequestRefund;
 use Illuminate\Support\Facades\Event;
 use App\Services\WechatMwebService;
 use App\Services\WechatMiniService;
+use App\Services\WechatService;
 use App\Http\Resources\OrderResource;
+use App\Models\Refund;
 
 class OrderController extends Controller
 {
@@ -121,5 +125,71 @@ class OrderController extends Controller
             'trade_no' => $orderNo
         ]);
         return $order;
+    }
+
+    /**
+     * Refund
+     * @param  [type] $request [description]
+     * @return [type]          [description]
+     */
+    public function refund($request)
+    {
+        //提交订单号
+        $order = Order::where('trade_no', $request->trade_no)
+            ->where('status', Order::PAY_STATUS_SUCCESS)
+            ->first();
+        if (!$order) {
+            abort(404, '没有该订单');
+        }
+        //是否已经退款完成
+        if ($order->successfulRefund()) {
+            abort(404, '订单已经退款完成');
+        }
+        //创建退款单号, 开启事务
+        DB::beginTransaction();
+        try {
+            $refund = $this->createRefund($order);
+            //创建退款请求日志
+            Event::fire(new InternalRequestRefund($refund, $request));
+            //创建渠道订单请求
+            switch ($order->channel) {
+                case Order::CHANNEL_WECHAT:
+                    $ref = new WechatService($order, $channel, $payWay, $refund);
+                    $response = $ref->refund();
+                    break;
+            }
+            Event::fire(new ExternalRequestRefund($refund, $request, $response));
+            DB::commit();
+            return new OrderResource($order);
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+    }
+
+    /**
+     * Crearte refund
+     * @param  Order  $order [description]
+     * @return [type]        [description]
+     */
+    protected function createRefund(Order $order)
+    {
+        $refund = Refund::create([
+            'client_id' => $order->client_id,
+            'payment_channel_id' => $order->payment_channel_id,
+            'payment_order_id' => $order->id,
+            'trade_no' => $order->trade_no,
+            'amount' => $order->amount,
+            'reason' => '用户退货',
+        ]);
+        //订单号生成并回写
+        $refundNo = sprintf(
+            '%s%s',
+            Carbon::now()->timezone('Asia/Shanghai')->format('YmdHis'),
+            str_pad($order->id, 4, 0, STR_PAD_LEFT)
+        );
+        $refund->update([
+            'refund_no' => $refundNo
+        ]);
+        return $refund;
     }
 }

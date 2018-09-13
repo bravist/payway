@@ -30,6 +30,7 @@ Route::namespace('Api')
         ->middleware(['client', 'api.signed'])
         ->group(function () {
             Route::post('orders', 'OrderController@store')->name('api.orders');
+            Route::post('refunds', 'OrderController@refund')->name('api.refunds');
         });
 
 /**

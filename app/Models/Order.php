@@ -40,6 +40,11 @@ class Order extends Model
 
     protected $appends = ['prepay'];
 
+    protected $casts = [
+        'paid_at' => 'datetime:Y-m-d H:i:s',
+        'expired_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     /**
     * Order has own Channel
     * @return App\Models\Channel
@@ -89,5 +94,15 @@ class Order extends Model
     public function getPrepayAttribute()
     {
         return $this->prepay();
+    }
+
+    public function refunds()
+    {
+        return $this->hasMany(Refund::class, 'payment_order_id');
+    }
+
+    public function successfulRefund()
+    {
+        return $this->refunds()->where('status', Refund::STATUS_SUCCESS)
     }
 }

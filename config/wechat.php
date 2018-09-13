@@ -112,9 +112,11 @@ return [
             'key'                => env('WECHAT_PAYMENT_KEY', 'key-for-signature'),
             'cert_path'          => env('WECHAT_PAYMENT_CERT_PATH', 'path/to/cert/apiclient_cert.pem'),    // XXX: 绝对路径！！！！
             'key_path'           => env('WECHAT_PAYMENT_KEY_PATH', 'path/to/cert/apiclient_key.pem'),      // XXX: 绝对路径！！！！
-            'notify_url'         => 'http://example.com/payments/wechat-notify',                           // 默认支付结果通知地址
+            'notify_url'         => env('WECHAT_PAYMENT_NOTIFY'),                           // 默认支付结果通知地址
         ],
-        // ...
+        'refund' => [
+            'notify_url'        => env('WECHAT_REFUND_NOTIFY'),
+        ]
     ],
 
     /*
