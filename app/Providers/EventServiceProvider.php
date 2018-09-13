@@ -40,6 +40,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\ExternalRequestRefund' => [
             'App\Listeners\SaveExternalRequestRefundLog'
         ],
+        'App\Events\ExternalQueryRefund' => [
+            'App\Listeners\SaveExternalQueryRefundLog'
+        ]
     ];
 
     /**

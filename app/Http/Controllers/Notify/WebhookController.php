@@ -106,7 +106,7 @@ class WebhookController extends Controller
                 ]);
                 $refund->update([
                     'status' => Refund::STATUS_SUCCESS,
-                    'refunded_at' => Carbon::now()
+                    'refunded_at' => $message['success_time'],
                 ]);
                 WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
             } else {
