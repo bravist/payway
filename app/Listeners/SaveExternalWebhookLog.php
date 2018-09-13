@@ -2,13 +2,13 @@
 
 namespace App\Listeners;
 
-use App\Events\ExternalRequestOrder;
+use App\Events\ExternalWebhook;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Log;
 use App\Models\Event;
 
-class SaveExternalRequestOrderLog
+class SaveExternalWebhookLog
 {
     /**
      * Create the event listener.
@@ -23,12 +23,12 @@ class SaveExternalRequestOrderLog
     /**
      * Handle the event.
      *
-     * @param  ExternalRequestOrder  $event
+     * @param  ExternalWebhook  $event
      * @return void
      */
-    public function handle(ExternalRequestOrder $event)
+    public function handle(ExternalWebhook $event)
     {
-        $paymentEvent = Event::where('name', Event::EXTERNAL_REQUEST_ORDER)->first();
+        $paymentEvent = Event::where('name', Event::EXTERNAL_WEHOOK)->first();
         Log::create([
             'payment_event_id' => $paymentEvent->id,
             'logger_id' => $event->logger->id,

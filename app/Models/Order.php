@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    const CHANNEL_WECHAT = 'wechant';
+    const CHANNEL_WECHAT = 'wechat';
     const CHANNEL_ALIPAY = 'alipay';
 
     const CHANNEL_PAY_WAY_WECHAT_MINI = 'wechat_mini';
@@ -18,7 +18,7 @@ class Order extends Model
     const PAY_STATUS_PROCESSING = 'processing';
     const PAY_STATUS_SUCCESS = 'success';
     const PAY_STATUS_CLOSED = 'closed';
-    const PAY_STATUS_CANELED = 'caneled';
+    const PAY_STATUS_CANCELED = 'canceled';
 
     const REFUND_STATUS_PROCESSING = 'processing';
     const REFUND_STATUS_SUCCESS = 'success';
@@ -38,10 +38,12 @@ class Order extends Model
      */
     protected $table = 'payment_orders';
 
-     /**
-     * Order has own Channel
-     * @return App\Models\Channel
-     */
+    protected $appends = ['prepay'];
+
+    /**
+    * Order has own Channel
+    * @return App\Models\Channel
+    */
     public function channel()
     {
         return $this->belongsTo(Channel::class, 'payment_channel_id');
@@ -57,6 +59,15 @@ class Order extends Model
     }
 
     /**
+     * Channel pay way
+     * @return [type] [description]
+     */
+    public function channelPayWay()
+    {
+        return $this->belongsTo(ChannelPayWay::class, 'payment_channel_pay_way_id');
+    }
+
+    /**
      * Many To Many Polymorphic Relations
      * @return [type] [description]
      */
@@ -66,19 +77,17 @@ class Order extends Model
     }
 
     /**
-     * Reverse status
-     * @param  boolean $index [description]
-     * @return [type]         [description]
+     * Prepay
+     * @return [type] [description]
      */
-    public static function reverseStatus($index = false)
+    public function prepay()
     {
-        $list = [
-            self::PAY_STATUS_PENDING => 0
-            self::PAY_STATUS_PROCESSING => 1,
-            self::PAY_STATUS_SUCCESS => 2,
-            self::PAY_STATUS_CLOSED => 3,
-            self::PAY_STATUS_CANELED => 4
-        ];
-        return $status === true  ? $list : $list[$index];
+        $event = Event::where('name', Event::EXTERNAL_REQUEST_ORDER)->first();
+        return $this->logs()->where('payment_event_id', $event->id)->first();
+    }
+
+    public function getPrepayAttribute()
+    {
+        return $this->prepay();
     }
 }

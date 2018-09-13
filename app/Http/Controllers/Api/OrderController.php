@@ -12,8 +12,10 @@ use App\Models\ChannelPayWay;
 use Carbon\Carbon;
 use App\Events\InternalRequestOrder;
 use App\Events\ExternalRequestOrder;
-use EasyWeChat\Factory;
 use Illuminate\Support\Facades\Event;
+use App\Services\WechatMwebService;
+use App\Services\WechatMiniService;
+use App\Http\Resources\OrderResource;
 
 class OrderController extends Controller
 {
@@ -24,30 +26,61 @@ class OrderController extends Controller
      */
     public function store(OrderRequest $request)
     {
-        $params = [];
+        $params = $response = [];
         //接收创建订单参数
         //验证签名
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-            //生成新订单
-            $order = $this->createOrder($request);
+            $token = $this->retrieveTokenByRequest($request);
+            $channel = Channel::where('client_id', $token->client_id)->first();
+            $payWay = ChannelPayWay::where('payment_channel_id', $channel->id)
+                                    ->where('way', $request->pay_way)
+                                    ->first();
+            $order = Order::where('out_trade_no', $request->out_trade_no)
+                            ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANCELED])
+                            ->where('payment_channel_id', $channel->id)
+                            ->where('payment_channel_pay_way_id', $payWay->id)
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+            if ($order) {
+                //订单是否支的付成功
+                if ($order->status == Order::PAY_STATUS_SUCCESS) {
+                    abort(403, '订单已经支付成功');
+                }
+                //订单是否过期
+                if (Carbon::now()->gte($order->expired_at)) {
+                    $order = $this->createOrder($request, $channel, $payWay);
+                } else {
+                    //返回预付单信息
+                    return new OrderResource($order);
+                }
+            } else {
+                //生成新订单
+                $order = $this->createOrder($request, $channel, $payWay);
+            }
             //创建生成新订单请求日志
             Event::fire(new InternalRequestOrder($request, $order));
             //创建渠道订单请求
             switch ($request->pay_way) {
+                case Order::CHANNEL_PAY_WAY_WECHAT_MWEB:
+                    $payment = new WechatMwebService($order, $channel, $payWay);
+                    $response = $payment->pay($params);
+                    break;
                 case Order::CHANNEL_PAY_WAY_WECHAT_MINI:
-                        $response = $this->payWechatMini($order, $params);
-                        //创建生成小程序支付请求日志
-                        Event::fire(new ExternalRequestOrder($order, $request, $response));
+                    $payment = new WechatMiniService($order, $channel, $payWay);
+                    $response = $payment->pay($params);
                     break;
             }
+            //创建生成小程序支付请求日志
+            Event::fire(new ExternalRequestOrder($order, $params, $response));
             //更新订单状态
             $order->update([
-                'status' => Order::reverseStatus(Order::PAY_STATUS_PROCESSING)
+                'status' => Order::PAY_STATUS_PROCESSING
             ]);
-            return $response;
             DB::commit();
+            return new OrderResource($order);
         } catch (\Exception $e) {
+            logger($e);
             DB::rollBack();
         }
         //创建订单请求日志（业务系统请求网关）监听器
@@ -58,16 +91,12 @@ class OrderController extends Controller
      * @param  [type] $request [description]
      * @return [type]          [description]
      */
-    protected function createOrder($request)
+    protected function createOrder($request, $channel, $payWay)
     {
-        $token = $this->retrieveTokenByRequest($request);
-        $channel = Channel::where('client_id', $token->client_id)->first();
-        $payWay = ChannelPayWay::where('payment_channel_id', $channel->id)->where('way', $request->pay_way)->first();
-
         //创建订单基本信息
         $order = Order::create([
             'out_trade_no' => $request->out_trade_no,
-            'client_id' => $token->client_id,
+            'client_id' => $channel->client_id,
             'payment_channel_id' => $channel->id,
             'channel' => $channel->channel,
             'payment_channel_pay_way_id' => $payWay->id,
@@ -92,30 +121,5 @@ class OrderController extends Controller
             'trade_no' => $orderNo
         ]);
         return $order;
-    }
-
-    /**
-     * Pay wechat mini_program
-     * @param  Order  $order   [description]
-     * @param  array  &$params [description]
-     * @return [type]          [description]
-     */
-    public function payWechatMini(Order $order, &$params = [])
-    {
-        $config = [
-            // 必要配置
-            'app_id'             => config('wechat.payment.default.app_id'),
-            'mch_id'             => config('wechat.payment.default.mch_id'),
-            'key'                => config('wechat.payment.default.key'),   // API 密钥
-        ];
-        $app = Factory::payment($config);
-        $params = [
-            'body' => $order->body,
-            'out_trade_no' => $order->trade_no,
-            'total_fee' => $order->amount,
-            'trade_type' => 'JSAPI',
-            'notify_url' => config('wechat.payment.default.notify_url')
-        ];
-        return $app->order->unify($params);
     }
 }

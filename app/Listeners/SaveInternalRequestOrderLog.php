@@ -10,7 +10,6 @@ use App\Models\Event;
 
 class SaveInternalRequestOrderLog
 {
-    const EVENT_NAME = 'internal_request_order';
     
     /**
      * Create the event listener.
@@ -30,13 +29,13 @@ class SaveInternalRequestOrderLog
      */
     public function handle(InternalRequestOrder $event)
     {
-        $paymentEvent = Event::where('name', self::EVENT_NAME)->first();
+        $paymentEvent = Event::where('name', Event::INTERNAL_REQUEST_ORDER)->first();
         Log::create([
             'payment_event_id' => $paymentEvent->id,
-            'logger_id' => $event->order->id,
-            'logger_type' => $event->order->getMorphClass(),
+            'logger_id' => $event->logger->id,
+            'logger_type' => $event->logger->getMorphClass(),
             'request_url' => $event->request->fullUrl(),
-            'request' => json_encode($request->all()),
+            'request' => json_encode($event->request->all()),
             'response' => ''
         ]);
     }

@@ -10,22 +10,30 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class InternalRequestOrder
+class ExternalQueryOrder
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $request;
     public $logger;
-    
+    public $status;
+    public $request;
+    public $response;
+
+    const PAY_STATUS_PAID = 'paid';
+    const PAY_STATUS_EXPIRED = 'expired';
+    const PAY_STATUS_QUERY = 'query';
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($request, $logger)
+    public function __construct($logger, $status, $request, $response)
     {
-        $this->request = $request;
         $this->logger = $logger;
+        $this->status = $status;
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**
