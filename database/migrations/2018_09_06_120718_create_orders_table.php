@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
         Schema::create('payment_orders', function (Blueprint $table) {
             $table->increments('id');
             $table->string('trade_no', 64)->unique()->nullable()->comment('交易号');
-            $table->string('out_trade_no', 64)->nullable()->comment('商户交易号');
+            $table->string('out_trade_no', 64)->index()->nullable()->comment('商户交易号');
             $table->unsignedInteger('client_id')->default(0)->comment('客户端ID');
             $table->unsignedInteger('payment_channel_id')->index()->default(0)->comment('支付渠道ID');
             $table->string('channel', 100)->index()->comment('支付渠道');
