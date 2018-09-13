@@ -10,22 +10,22 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class InternalRequestOrder
+class InternalRequestRefund
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $request;
     public $logger;
-    
+    public $request;
+    public $response;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($request, $logger)
+    public function __construct()
     {
-        $this->request = $request;
-        $this->logger = $logger;
+        //
     }
 
     /**

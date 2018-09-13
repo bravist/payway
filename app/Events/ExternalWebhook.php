@@ -10,22 +10,24 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class InternalRequestOrder
+class ExternalWebhook
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $request;
     public $logger;
-    
+    public $request;
+    public $response;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($request, $logger)
+    public function __construct($logger, $request, $response)
     {
-        $this->request = $request;
         $this->logger = $logger;
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**

@@ -2,13 +2,13 @@
 
 namespace App\Listeners;
 
-use App\Events\ExternalRequestOrder;
+use App\Events\InternalWebhook;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Log;
 use App\Models\Event;
 
-class SaveExternalRequestOrderLog
+class SaveInternalWebhookLog
 {
     /**
      * Create the event listener.
@@ -23,19 +23,19 @@ class SaveExternalRequestOrderLog
     /**
      * Handle the event.
      *
-     * @param  ExternalRequestOrder  $event
+     * @param  InternalWebhook  $event
      * @return void
      */
-    public function handle(ExternalRequestOrder $event)
+    public function handle(InternalWebhook $event)
     {
-        $paymentEvent = Event::where('name', Event::EXTERNAL_REQUEST_ORDER)->first();
+        $paymentEvent = Event::where('name', Event::INTERNAL_WEBHOOK)->first();
         Log::create([
             'payment_event_id' => $paymentEvent->id,
             'logger_id' => $event->logger->id,
             'logger_type' => $event->logger->getMorphClass(),
-            'request_url' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
-            'request' => json_encode($event->request),
-            'response' => json_encode($event->response)
+            'request_url' => $event->request->fullUrl(),
+            'request' => json_encode($event->request->all()),
+            'response' => ''
         ]);
     }
 }

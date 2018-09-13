@@ -2,13 +2,11 @@
 
 namespace App\Listeners;
 
-use App\Events\ExternalRequestOrder;
+use App\Events\ExternalQueryRefund;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\Log;
-use App\Models\Event;
 
-class SaveExternalRequestOrderLog
+class SaveExternalQueryRefundLog
 {
     /**
      * Create the event listener.
@@ -23,17 +21,17 @@ class SaveExternalRequestOrderLog
     /**
      * Handle the event.
      *
-     * @param  ExternalRequestOrder  $event
+     * @param  ExternalQueryRefund  $event
      * @return void
      */
-    public function handle(ExternalRequestOrder $event)
+    public function handle(ExternalQueryRefund $event)
     {
-        $paymentEvent = Event::where('name', Event::EXTERNAL_REQUEST_ORDER)->first();
+        $paymentEvent = Event::where('name', Event::EXTERNAL_QUERY_REFUND)->first();
         Log::create([
             'payment_event_id' => $paymentEvent->id,
             'logger_id' => $event->logger->id,
             'logger_type' => $event->logger->getMorphClass(),
-            'request_url' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
+            'request_url' => 'https://api.mch.weixin.qq.com/pay/refundquery',
             'request' => json_encode($event->request),
             'response' => json_encode($event->response)
         ]);

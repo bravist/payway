@@ -25,7 +25,7 @@ class CreateRefundsTable extends Migration
             $table->unsignedBigInteger('amount')->default(0)->comment('退款金额，单位：分');
             $table->string('reason')->comment('退款原因');
             $table->timestamp('refunded_at')->nullable()->comment('退款完成时间');
-            $table->unsignedTinyInteger('status')->index()->default(0)->comment('退款状态\n0 待退款\n1 退款中\n2 退款成功\n3 退款失败');
+            $table->string('status')->index()->default('pending')->comment('退款状态 pending 待退款 processing 退款中 success 退款成功 closed 已关闭');
             $table->string('error')->nullable()->comment('失败原因');
             $table->timestamps();
         });

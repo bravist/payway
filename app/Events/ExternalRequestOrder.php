@@ -9,7 +9,6 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use App\Models\Order;
 
 class ExternalRequestOrder
 {
@@ -17,16 +16,16 @@ class ExternalRequestOrder
 
     public $request;
     public $response;
-    public $order;
+    public $logger;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Order $order, array $request, string $response)
+    public function __construct($logger, $request, $response)
     {
-        $this->order = $order;
+        $this->logger = $logger;
         $this->request = $request;
         $this->response = $response;
     }

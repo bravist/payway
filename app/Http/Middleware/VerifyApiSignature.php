@@ -19,6 +19,13 @@ class VerifyApiSignature
     {
         try {
             if (config('signature.debug')) {
+                if (! $request->has('sign')
+                    || empty($request->sign)
+                    || !$request->has('sign_type')
+                    || empty($request->sign_type)) {
+                    throw new AuthenticationException;
+                }
+                logger(Signature::sign($request->except(['sign', 'sign_type'])), ['signing']);
                 $signSecretType = sprintf('signature.%s.options.key', $request->sign_type);
                 logger($signSecretType, [':sign_secret_type']);
                 logger($request->sign, [':signature']);

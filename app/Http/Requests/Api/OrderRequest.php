@@ -26,10 +26,10 @@ class OrderRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'out_trade_no' => 'bail|required|max:64|unique:payment_orders,out_trade_no',
+                    'out_trade_no' => 'bail|required|max:64',
                     'subject' => 'bail|required|max:255',
                     'amount' => 'bail|required|integer|min:1|max:1000000000',
-                    'pay_way' => 'bail|required|string|exists:payment_channel_pay_way,way',
+                    'pay_way' => 'bail|required|string|exists:payment_channel_pay_ways,way',
                     'detail' => 'bail|max:255',
                     'buyer' => 'max:255',
                     'seller' => 'max:255',
@@ -50,8 +50,7 @@ class OrderRequest extends FormRequest
         return [
             'out_trade_no.required' => '外部订单号不能为空',
             'out_trade_no.max' => '外部订单号最大支持64个字符',
-            'out_trade_no.unique' => '外部订单号重复',
-            'subject.required' => '支付标题不能为空'
+            'subject.required' => '支付标题不能为空',
             'subject.max' => '支付标题最大支持255个字符',
             'amount.required' => '订单金额最大支持255个字符',
             'amount.integer' => '订单金额仅支持数字',

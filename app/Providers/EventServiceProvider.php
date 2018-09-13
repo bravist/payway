@@ -22,6 +22,26 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\ExternalRequestOrder' => [
             'App\Listeners\SaveExternalRequestOrderLog'
+        ],
+        'App\Events\ExternalQueryOrder' => [
+            'App\Listeners\SaveExternalQueryPaidOrderLog',
+            'App\Listeners\SaveExternalQueryExpiredOrderLog',
+            'App\Listeners\SaveExternalQueryOrderLog'
+        ],
+        'App\Events\ExternalWebhook' => [
+            'App\Listeners\SaveExternalWebhookLog'
+        ],
+        'App\Events\InternalWebhook' => [
+            'App\Listeners\SaveInternalWebhookLog'
+        ],
+        'App\Events\InternalRequestRefund' => [
+            'App\Listeners\SaveInternalRequestRefundLog',
+        ],
+        'App\Events\ExternalRequestRefund' => [
+            'App\Listeners\SaveExternalRequestRefundLog'
+        ],
+        'App\Events\ExternalQueryRefund' => [
+            'App\Listeners\SaveExternalQueryRefundLog'
         ]
     ];
 
