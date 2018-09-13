@@ -6,6 +6,8 @@ php artisan migrate
 2. Import default payment events
 ```php
 php artisan db:seed --class=PaymentEventsTableSeeder
+php artisan db:seed --class=PaymentChannelsTableSeeder
+php artisan db:seed --class=PaymentChannelPayWaysTableSeeder
 ```
 3. Generate passport key
 ```php
@@ -15,7 +17,7 @@ php artisan passport:keys
 ```php
 php artisan passport:client
 ```
-5. Eevriment
+5. Config envrioment
 
 
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
