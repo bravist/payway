@@ -145,6 +145,9 @@ class OrderController extends Controller
         if ($order->successfulRefund()) {
             abort(404, '订单已经退款完成');
         }
+        if ($order->processingRefund()) {
+            abort(404, '订单正在退款中');
+        }
         //创建退款单号, 开启事务
         DB::beginTransaction();
         try {

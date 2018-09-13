@@ -103,6 +103,11 @@ class Order extends Model
 
     public function successfulRefund()
     {
-        return $this->refunds()->where('status', Refund::STATUS_SUCCESS)
+        return $this->refunds()->where('status', Refund::STATUS_SUCCESS)->first();
+    }
+
+    public function processingRefund()
+    {
+        return $this->refunds()->where('status', Refund::STATUS_PROCESSING)->first();
     }
 }
