@@ -19,4 +19,13 @@ class ChannelWebhook extends Model
      * @var string
      */
     protected $table = 'payment_channel_webhooks';
+
+    /**
+     * 多态定义
+     * @return [type] [description]
+     */
+    public function webhookable()
+    {
+        return $this->morphTo();
+    }
 }

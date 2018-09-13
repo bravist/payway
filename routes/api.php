@@ -30,6 +30,7 @@ Route::namespace('Api')
         ->middleware(['client', 'api.signed'])
         ->group(function () {
             Route::post('orders', 'OrderController@store')->name('api.orders');
+            Route::post('refunds', 'OrderController@refund')->name('api.refunds');
         });
 
 /**
@@ -37,5 +38,6 @@ Route::namespace('Api')
  */
 Route::namespace('Notify')
         ->group(function () {
-            Route::any('wechat/notify', 'WebHookController@wechatNotify');
+            Route::any('wechat/payment/notify', 'WebHookController@wechatPaymentNotify');
+            Route::any('wechat/refund/notify', 'WebHookController@wechatRefundNotify');
         });

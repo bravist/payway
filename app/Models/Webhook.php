@@ -23,4 +23,13 @@ class Webhook extends Model
      * @var string
      */
     protected $table = 'payment_webhooks';
+
+    /**
+    * 多态定义
+    * @return [type] [description]
+    */
+    public function webhookable()
+    {
+        return $this->morphTo();
+    }
 }

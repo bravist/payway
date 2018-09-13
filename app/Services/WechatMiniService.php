@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Services\PaymentService;
-use EasyWeChat\Factory;
+use App\Services\WechatService;
 
-class WechatMiniService extends PaymentService
+class WechatMiniService extends WechatService
 {
     /**
     * Pay wechat mini_program
@@ -15,20 +14,13 @@ class WechatMiniService extends PaymentService
     */
     public function pay(&$params = [])
     {
-        $config = [
-            // 必要配置
-            'app_id'             => $this->channelPayWay->app_id,
-            'mch_id'             => $this->channelPayWay->merchant_id,
-            'key'                => $this->channelPayWay->app_secret,   // API 密钥
-        ];
-        $app = Factory::payment($config);
         $params = [
             'body' => $this->order->body,
             'out_trade_no' => $this->order->trade_no,
             'total_fee' => $this->order->amount,
             'trade_type' => 'JSAPI',
-            'notify_url' => $this->channel->notify_url
+            'notify_url' => config('wechat.payment.default.notify_url')
         ];
-        return $app->order->unify($params);
+        return $this->getApp()->order->unify($params);
     }
 }
