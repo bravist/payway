@@ -18,7 +18,7 @@ class PaymentChannelsTableSeeder extends Seeder
                 'channel' => 'wechat',
                 'desc' => '微信支付',
                 'return_url' => '',
-                'notify_url' => 'http://mall-dev.ruoyubuy.com/api/wechat/notify',
+                'notify_url' => 'https://mall-dev.ruoyubuy.com/api/inner/payway/callback',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],

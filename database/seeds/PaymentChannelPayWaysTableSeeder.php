@@ -25,6 +25,18 @@ class PaymentChannelPayWaysTableSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            [
+                'payment_channel_id' => '1',
+                'way' => 'wechat_mini',
+                'merchant_id' => '1515108091',
+                'app_id' => 'wx36ba7b235f88146e',
+                'app_secret' => '0b966602370ba9763b8b01dd89735c56',
+                'certficate' => '',
+                'key' => '',
+                'refund_rate' => 0,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ];
 
         collect($defaults)->each(function ($default) {
