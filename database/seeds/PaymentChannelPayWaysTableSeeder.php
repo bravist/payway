@@ -30,7 +30,7 @@ class PaymentChannelPayWaysTableSeeder extends Seeder
                 'way' => 'wechat_mini',
                 'merchant_id' => '1515108091',
                 'app_id' => 'wx36ba7b235f88146e',
-                'app_secret' => '0b966602370ba9763b8b01dd89735c56',
+                'app_secret' => 'Sichuandazhiruoyudianzishangwu88',
                 'certficate' => '',
                 'key' => '',
                 'refund_rate' => 0,
