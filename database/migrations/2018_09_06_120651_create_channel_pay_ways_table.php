@@ -14,7 +14,7 @@ class CreateChannelPayWaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_channel_pay_ways', function (Blueprint $table) {
+        Schema::create('channel_pay_ways', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('payment_channel_id')->default(0)->comment('支付渠道ID');
             $table->string('way', 100)->comment('支付方式');
@@ -26,7 +26,6 @@ class CreateChannelPayWaysTable extends Migration
             $table->float('refund_rate')->comment('退款费率');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `payment_channel_pay_ways` comment '支付渠道付款方式'");
     }
 
     /**

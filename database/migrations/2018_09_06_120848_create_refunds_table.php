@@ -14,7 +14,7 @@ class CreateRefundsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_refunds', function (Blueprint $table) {
+        Schema::create('refunds', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('client_id')->default(0)->comment('客户端ID');
             $table->unsignedInteger('payment_channel_id')->default(0)->comment('退款渠道ID');
@@ -29,7 +29,6 @@ class CreateRefundsTable extends Migration
             $table->string('error')->nullable()->comment('失败原因');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `payment_refunds` comment '退款单'");
     }
 
     /**

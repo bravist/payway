@@ -25,13 +25,6 @@ class Event extends Model
     protected $guarded = [];
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'payment_events';
-
-    /**
      * Many To Many Polymorphic Relations
      * @return [type] [description]
      */

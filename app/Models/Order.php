@@ -31,13 +31,6 @@ class Order extends Model
      */
     protected $guarded = [];
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'payment_orders';
-
     protected $appends = ['prepay'];
 
     protected $casts = [

@@ -14,7 +14,7 @@ class CreateWebhooksTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_webhooks', function (Blueprint $table) {
+        Schema::create('webhooks', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('client_id')->default(0)->comment('客户端ID');
             $table->unsignedInteger('payment_channel_id')->default(0)->comment('支付渠道ID');
@@ -29,7 +29,6 @@ class CreateWebhooksTable extends Migration
             $table->unsignedTinyInteger('status')->index()->default(0)->comment('通知结果\n0 待通知\n1 通知成功\n2 通知失败');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `payment_webhooks` comment '业务系统异步通知日志'");
     }
 
     /**

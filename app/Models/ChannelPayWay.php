@@ -14,13 +14,6 @@ class ChannelPayWay extends Model
     protected $guarded = [];
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'payment_channel_pay_ways';
-
-    /**
      * Channel has own channel pay way
      * @return App\Models\Channel
      */

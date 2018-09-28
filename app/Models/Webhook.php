@@ -18,13 +18,6 @@ class Webhook extends Model
     protected $guarded = [];
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'payment_webhooks';
-
-    /**
     * 多态定义
     * @return [type] [description]
     */

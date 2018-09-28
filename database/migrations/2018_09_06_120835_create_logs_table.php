@@ -14,7 +14,7 @@ class CreateLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_logs', function (Blueprint $table) {
+        Schema::create('logs', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedTinyInteger('payment_event_id')->index()->default(0)->comment('日志事件ID');
             $table->unsignedInteger('logger_id')->default(0)->comment('日志多态类型ID');
@@ -24,7 +24,6 @@ class CreateLogsTable extends Migration
             $table->text('response')->nullable()->comment('响应内容');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `payment_logs` comment '支付订单日志'");
     }
 
     /**

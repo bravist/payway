@@ -14,7 +14,7 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_orders', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->increments('id');
             $table->string('trade_no', 64)->unique()->nullable()->comment('交易号');
             $table->string('out_trade_no', 64)->index()->nullable()->comment('商户交易号');
@@ -37,7 +37,6 @@ class CreateOrdersTable extends Migration
             $table->timestamps();
             $table->unique(['trade_no', 'out_trade_no', 'payment_channel_id','payment_channel_pay_way_id',  'status'], 'uniqid_order');
         });
-        DB::statement("ALTER TABLE `payment_orders` comment '支付订单'");
     }
 
     /**

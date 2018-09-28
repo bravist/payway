@@ -13,13 +13,12 @@ class CreateEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_events', function (Blueprint $table) {
+        Schema::create('events', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique()->comment('事件名');
             $table->string('desc')->nullable()->comment('事件描述');
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE `payment_events` comment '操作事件'");
     }
 
     /**
