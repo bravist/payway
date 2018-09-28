@@ -28,7 +28,7 @@ class PaymentChannelPayWaysTableSeeder extends Seeder
         ];
 
         collect($defaults)->each(function ($default) {
-            DB::table('payment_channel_pay_ways')->insert($default);
+            DB::table('channel_pay_ways')->insert($default);
         });
     }
 }

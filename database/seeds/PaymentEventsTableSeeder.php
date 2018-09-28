@@ -75,7 +75,7 @@ class PaymentEventsTableSeeder extends Seeder
             ],
         ];
         collect($defaults)->each(function ($default) {
-            DB::table('payment_events')->insert($default);
+            DB::table('events')->insert($default);
         });
     }
 }
