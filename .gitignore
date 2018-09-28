@@ -16,3 +16,7 @@ yarn-error.log
 .php_cs.cache
 docker/mysql
 docker/mysql/*
+.buildpath
+.project
+.settings/*
+vendor/*

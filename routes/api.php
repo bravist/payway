@@ -26,13 +26,23 @@ use Illuminate\Http\Request;
 /**
  * Functional apis
  */
-Route::namespace('Api')
-        ->middleware(['api.signed'])
-        ->group(function () {
-            Route::post('orders', 'OrderController@store')->name('api.orders');
-            Route::post('refunds', 'OrderController@refund')->name('api.refunds');
-        });
+// Route::namespace('Api')
+//         ->middleware(['api.signed'])
+//         ->group(function () {
+//             Route::post('orders', 'OrderController@store')->name('api.orders');
+//             Route::post('refunds', 'OrderController@refund')->name('api.refunds');
+//         });
 
+Route::group([
+    'namespace' => 'Api/Inner',
+    'middleware' => 'auth:api',
+    'prefix' => '/inner',
+], function ($router) {
+    Route::post('orders', 'OrderController@store')->name('api.orders');
+    Route::post('refunds', 'OrderController@refund')->name('api.refunds');
+});
+        
+        
 /**
  * Wechat notify
  */
