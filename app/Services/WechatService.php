@@ -9,11 +9,16 @@ class WechatService extends PaymentService
 {
     public function setConfig()
     {
+        $certPath = $this->channelPayWay->wx_certs ? json_decode($this->channelPayWay->wx_certs)->cert_path : '';
+        $keyPath = $this->channelPayWay->wx_certs ? json_decode($this->channelPayWay->wx_certs)->key_path : '';
+        
         return [
             // 必要配置
             'app_id'             => $this->channelPayWay->app_id,
             'mch_id'             => $this->channelPayWay->merchant_id,
             'key'                => $this->channelPayWay->app_secret,   // API 密钥
+            'cert_path'         => $certPath,
+            'key_path'         => $keyPath,
         ];
     }
 

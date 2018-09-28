@@ -21,9 +21,8 @@ class CreateChannelPayWaysTable extends Migration
             $table->string('merchant_id', 45)->comment('渠道商户号');
             $table->string('app_id', 45)->comment('支付网关APP_ID');
             $table->string('app_secret')->comment('支付主体APP密钥');
-            $table->string('certficate')->comment('支付主体证书');
-            $table->string('key')->comment('支付主体密钥');
-            $table->float('refund_rate')->comment('退款费率');
+            $table->json('wx_certs')->nullable()->comment('微信支付API证书');
+            $table->float('refund_rate')->nullable()->comment('退款费率');
             $table->timestamps();
         });
     }
