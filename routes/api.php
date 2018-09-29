@@ -34,9 +34,8 @@ use Illuminate\Http\Request;
 //         });
 
 Route::group([
-    'namespace' => 'Api/Inner',
+    'namespace' => 'Api',
     'middleware' => 'auth:api',
-    'prefix' => '/inner',
 ], function ($router) {
     Route::post('orders', 'OrderController@store')->name('api.orders');
     Route::post('refunds', 'OrderController@refund')->name('api.refunds');
