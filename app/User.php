@@ -25,11 +25,4 @@ class User extends Authenticatable
      */
     protected $hidden = [
     ];
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'clients';
 }
