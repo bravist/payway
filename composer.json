@@ -15,7 +15,8 @@
         "noh4ck/graphiql": "@dev",
         "overtrue/laravel-wechat": "~4.0",
         "predis/predis": "^1.1",
-        "rebing/graphql-laravel": "~1.14"
+        "rebing/graphql-laravel": "~1.14",
+        "ry/api-auth": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
@@ -69,6 +70,10 @@
         "packagist": {
             "type": "composer",
             "url": "https://packagist.laravel-china.org"
+        },
+        "ry/api-auth": {
+            "type": "vcs",
+            "url": "https://gitlab.ruoyubuy.com/ry/api-auth.git"
         }
     }
 }

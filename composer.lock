@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "20b9b948a391f8e85f92b8f86b9e9eae",
+    "content-hash": "486d5c88b0e3bffa4a689b42c75c0c0b",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -2783,6 +2783,60 @@
                 "react"
             ],
             "time": "2018-09-06T12:47:51+00:00"
+        },
+        {
+            "name": "ry/api-auth",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.ruoyubuy.com/ry/api-auth.git",
+                "reference": "f0ab43f0268f7457a60ed6cef8bb077862f8395f"
+            },
+            "require": {
+                "liyu/signature": "^0.4",
+                "php": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ry\\APIAuth\\Providers\\LaravelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ry\\APIAuth\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Ry\\APIAuth\\Test\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zhang Lu",
+                    "email": "zhanglu@ruoyubuy.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "API Token Authentication for Laravel.",
+            "homepage": "https://gitlab.ruoyubuy.com/ry/api-auth",
+            "keywords": [
+                "api token",
+                "auth",
+                "authentication",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://gitlab.ruoyubuy.com/ry/api-auth/issues",
+                "source": "https://gitlab.ruoyubuy.com/ry/api-auth"
+            },
+            "time": "2018-09-29T02:47:10+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -6714,7 +6768,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "noh4ck/graphiql": 20
+        "noh4ck/graphiql": 20,
+        "ry/api-auth": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
