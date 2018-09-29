@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "809fa47e1f2265baa277b5ae77b9840b",
@@ -2426,9 +2426,10 @@
             "source": {
                 "type": "git",
                 "url": "https://gitlab.ruoyubuy.com/ry/api-auth.git",
-                "reference": "f0ab43f0268f7457a60ed6cef8bb077862f8395f"
+                "reference": "d4a005fd4df45adce5fad50409047f3c3162ac51"
             },
             "require": {
+                "guzzlehttp/guzzle": "^6.3",
                 "liyu/signature": "^0.4",
                 "php": "^7.0"
             },
@@ -2472,7 +2473,7 @@
                 "issues": "https://gitlab.ruoyubuy.com/ry/api-auth/issues",
                 "source": "https://gitlab.ruoyubuy.com/ry/api-auth"
             },
-            "time": "2018-09-29T02:47:10+00:00"
+            "time": "2018-09-29T13:42:16+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
