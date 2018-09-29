@@ -35,8 +35,7 @@ class OrderController extends Controller
         //验证签名
         DB::beginTransaction();
         try {
-            $token = $this->retrieveTokenByRequest($request);
-            $channel = Channel::where('client_id', $token->client_id)->first();
+            $channel = Channel::where('client_id', $this->client()->id)->first();
             $payWay = ChannelPayWay::where('payment_channel_id', $channel->id)
                                     ->where('way', $request->pay_way)
                                     ->first();
@@ -164,7 +163,7 @@ class OrderController extends Controller
             Event::fire(new ExternalRequestRefund($refund, $request, $response));
             DB::commit();
             return new OrderResource($order);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
         }
     }
