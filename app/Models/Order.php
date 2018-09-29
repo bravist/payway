@@ -34,8 +34,9 @@ class Order extends Model
     protected $appends = ['prepay'];
 
     protected $casts = [
-        'paid_at' => 'datetime:Y-m-d H:i:s',
-        'expired_at' => 'datetime:Y-m-d H:i:s',
+        'paid_at',
+        'expired_at',
+        'pay_at',
     ];
 
     /**
