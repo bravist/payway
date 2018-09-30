@@ -12,6 +12,7 @@ use App\Models\Webhook;
 use App\Jobs\WebhookNotifier;
 use Carbon\Carbon;
 use App\Models\Refund;
+use EasyWeChat\Factory;
 
 class WebhookController extends Controller
 {
