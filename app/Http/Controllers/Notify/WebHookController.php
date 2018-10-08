@@ -167,9 +167,11 @@ class WebHookController extends Controller
                     'refunded_at' => $message['success_time'],
                 ]);
                 WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
+                DB::commit();
             } else {
                 return $fail('通信失败，请稍后再通知我');
             }
+            DB::rollBack();
             return true; // 返回处理完成
         });
         return $response; // return $response;
