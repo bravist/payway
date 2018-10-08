@@ -13,18 +13,24 @@ use App\Jobs\WebhookNotifier;
 use Carbon\Carbon;
 use App\Models\Refund;
 use EasyWeChat\Factory;
+use EasyWeChat\Kernel\Support\XML;
+use EasyWeChat\Kernel\Support;
+use Illuminate\Support\Facades\DB;
 
 class WebhookController extends Controller
 {
     public function wechatPaymentNotify(Request $request)
     {
-        $params = simplexml_load_string($request->getContent());
-        $order = Order::where('trade_no', $params->out_trade_no)->first();
+        DB::beginTransaction();
+        $params = XML::parse(strval($request->getContent()));
+//      unset($params['sign']);
+//      $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
+//      dd($sign);
+        $order = Order::where('trade_no', $params['out_trade_no'])->first();
         if (! $order) {
             $fail = function () {
                 return '订单不存在';
-            }
-            return $fail;
+            };
         }
         $config = [
             // 必要配置
@@ -33,7 +39,7 @@ class WebhookController extends Controller
             'key'                => $order->channelPayWay->app_secret,   // API 密钥
         ];
         $app = Factory::payment($config);
-        $response = $app->handlePaidNotify(function ($message, $fail, $order) {
+        $response = $app->handlePaidNotify(function ($message, $fail) use ($order) {
             Event::fire(new ExternalWebhook($order, [], $message));
             if (! $order
                 || $order->status == Order::PAY_STATUS_SUCCESS
@@ -42,26 +48,26 @@ class WebhookController extends Controller
             }
             if ($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
                 ChannelWebhook::create([
-                    'client_id' => $order->channel->client_id,
+                    'client_id' => $order->client_id,
                     'webhookable_id' => $order->id,
-                    'webhookable_id' => $order->getMorphClass(),
+                    'webhookable_type' => $order->getMorphClass(),
                     'trade_no' => $order->trade_no,
-                    'payment_channel_id' => $order->channel->id,
+                    'payment_channel_id' => $order->payment_channel_id,
                     'out_trade_no' => $order->out_trade_no,
                     'channel_trade_no' => $message['transaction_id'],
-                    'channel' => $order->$order->channel,
+                    'channel' => $order->channel,
                     'context' => json_encode($message),
                 ]);
                 $notifier = Webhook::create([
-                    'client_id' => $order->channel->client_id,
+                    'client_id' => $order->client_id,
                     'trade_no' => $order->trade_no,
-                    'payment_channel_id' => $order->channel->id,
+                    'payment_channel_id' => $order->payment_channel_id,
                     'webhookable_id' => $order->id,
-                    'webhookable_id' => $order->getMorphClass(),
+                    'webhookable_type' => $order->getMorphClass(),
                     'out_trade_no' => $order->out_trade_no,
                     'channel_trade_no' => $message['transaction_id'],
                     'trade_no' => $order->trade_no,
-                    'url' => $order->channel->notify_url,
+                    'url' => $order->channel()->first()->notify_url,
                     'context' => json_encode($order->toArray()),
                     'channel_context' => json_encode($message),
                 ]);
@@ -70,9 +76,11 @@ class WebhookController extends Controller
                     'paid_at' => Carbon::now()
                 ]);
                 WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
+                DB::commit();
             } else {
                 return $fail('通信失败，请稍后再通知我');
             }
+            DB::rollBack();
             return true; // 返回处理完成
         });
         return $response; // return $response;

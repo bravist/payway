@@ -10,6 +10,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Webhook;
 use App\Events\InternalWebhook;
 use Illuminate\Support\Facades\Event;
+use Ry\HTTPClient\Client;
+use DB;
 
 class WebhookNotifier implements ShouldQueue
 {
@@ -36,7 +38,7 @@ class WebhookNotifier implements ShouldQueue
     {
         try {
             $params = json_decode($this->webhook->context, true);
-            $response = $client->post($this->webhook->notify_url, [
+            $response = (new Client)->request('POST', $this->webhook->notify_url, [
                 'form_params' => $params
             ]);
             $context = (string) $response->getBody();
@@ -49,7 +51,7 @@ class WebhookNotifier implements ShouldQueue
                 });
             }
         } catch (\Exception $e) {
-            DB::transaction(function () use ($context) {
+            DB::transaction(function () {
                 $this->webhook->update([
                     'status' => Webhook::STATUS_FAIL
                 ]);
