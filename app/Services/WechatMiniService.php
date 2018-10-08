@@ -22,6 +22,7 @@ class WechatMiniService extends WechatService
             'openid' => $this->order->buyer,
             'notify_url' => config('wechat.payment.default.notify_url')
         ];
+        logger($params);
         return $this->getApp()->order->unify($params);
     }
 }
