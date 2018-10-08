@@ -45,7 +45,7 @@ class WebhookNotifier implements ShouldQueue
             ]);
             $context = (string) $response->getBody();
             logger($context);
-            Event::fire(new InternalWebhook($order, $params, $context));
+            Event::fire(new InternalWebhook($this->webhook->webhookable, $params, $context));
             if ($context == 'success') {
                 DB::transaction(function () use ($context) {
                     $this->webhook->update([
