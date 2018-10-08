@@ -49,7 +49,7 @@ class OrderController extends Controller
             if ($order) {
                 //订单是否支的付成功
                 if ($order->status == Order::PAY_STATUS_SUCCESS) {
-                    throw new HttpException(404, '订单已经支付成功');
+                    throw new HttpException(400, '订单已经支付成功');
                     // abort(403, '订单已经支付成功');
                 }
                 //订单是否过期
@@ -77,7 +77,7 @@ class OrderController extends Controller
                     break;
             }
             if ($response['return_code'] == 'FAIL') {
-                throw new HttpException(404, $response['return_msg']);
+                throw new HttpException(400, $response['return_msg']);
             }
             //创建生成小程序支付请求日志
             Event::fire(new ExternalRequestOrder($order, $params, $response));
@@ -89,7 +89,7 @@ class OrderController extends Controller
             return new OrderResource($order);
         } catch (HttpException $e) {
             DB::rollBack();
-            abort($e->getCode(), $e->getMessage());
+            abort($e->getStatusCode(), $e->getMessage());
         }
         //创建订单请求日志（业务系统请求网关）监听器
     }
