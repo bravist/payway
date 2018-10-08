@@ -33,8 +33,8 @@ class SaveInternalWebhookLog
             'payment_event_id' => $paymentEvent->id,
             'logger_id' => $event->logger ? $event->logger->id : 0,
             'logger_type' => $event->logger ? $event->logger->getMorphClass() : '',
-            'request_url' => isset( $event->request->fullUrl()) ? $event->request->fullUrl() : '',
-            'request' => json_encode($event->request->all()),
+            'request_url' => '',
+            'request' => json_encode($event->request),
             'response' => json_encode($event->response)
         ]);
     }
