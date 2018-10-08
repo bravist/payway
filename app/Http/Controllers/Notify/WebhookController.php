@@ -23,9 +23,9 @@ class WebhookController extends Controller
     {
         DB::beginTransaction();
         $params = XML::parse(strval($request->getContent()));
-//      unset($params['sign']);
-//      $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
-//      dd($sign);
+        // unset($params['sign']);
+        // $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
+        // logger($sign, ['webhook']);
         $order = Order::where('trade_no', $params['out_trade_no'])->first();
         if (! $order) {
             $fail = function () {

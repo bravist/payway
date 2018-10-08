@@ -20,6 +20,7 @@ use App\Services\WechatMiniService;
 use App\Services\WechatService;
 use App\Http\Resources\OrderResource;
 use App\Models\Refund;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OrderController extends Controller
 {
@@ -48,7 +49,8 @@ class OrderController extends Controller
             if ($order) {
                 //订单是否支的付成功
                 if ($order->status == Order::PAY_STATUS_SUCCESS) {
-                    abort(403, '订单已经支付成功');
+                    throw new HttpException(404, '订单已经支付成功');
+                    // abort(403, '订单已经支付成功');
                 }
                 //订单是否过期
                 if (Carbon::now()->gte($order->expired_at)) {
@@ -83,8 +85,8 @@ class OrderController extends Controller
             DB::commit();
             return new OrderResource($order);
         } catch (\Exception $e) {
-            logger($e);
             DB::rollBack();
+            abort(500, $e->getMessage());
         }
         //创建订单请求日志（业务系统请求网关）监听器
     }
