@@ -15,7 +15,7 @@ class WechatMiniService extends WechatService
     public function pay(&$params = [])
     {
         $params = [
-            'body' => $this->order->body,
+            'body' => $this->order->body ? $this->order->body : $this->order->subject,
             'out_trade_no' => $this->order->trade_no,
             'total_fee' => $this->order->amount,
             'trade_type' => 'JSAPI',
