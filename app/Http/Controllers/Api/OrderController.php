@@ -167,7 +167,8 @@ class OrderController extends Controller
             throw new HttpException(404, '订单已经退款完成');
         }
         if ($order->processingRefund()) {
-            throw new HttpException(404, '订单正在退款中');
+            //退款中
+            dd(111);
         }
         //创建退款单号, 开启事务
         DB::beginTransaction();
@@ -184,9 +185,18 @@ class OrderController extends Controller
                     $response = $ref->refund();
                     break;
             }
+            if ($response['result_code'] == 'FAIL') {
+                throw new HttpException(400, $response['err_code_des']);
+            }
+            $refund->update([
+                'status' => Refund::STATUS_PROCESSING
+            ]);
             Event::fire(new ExternalRequestRefund($refund, $request, $response));
             DB::commit();
-            return new OrderResource($order);
+            return response()->json(['data' => [
+                "trade_no" => $order->trade_no,
+                'refund_no' => $refund->refund_no
+            ]]);
         } catch (HttpException $e) {
             DB::rollBack();
             abort($e->getStatusCode(), $e->getMessage());
