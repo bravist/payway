@@ -79,7 +79,6 @@ class WebhookController extends Controller
                     'paid_at' => $order->paid_at,
                     'expired_at' => $order->expired_at,
                     'status' => $order->status,
-                    'created_at' => $order->created_at,
                     'channel_webhook' => $order->prepay->response
                 ];
                 $notifier = Webhook::create([

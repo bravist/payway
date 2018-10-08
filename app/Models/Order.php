@@ -37,7 +37,6 @@ class Order extends Model
         'paid_at',
         'expired_at',
         'pay_at',
-        'created_at'
     ];
 
     protected $hidden = [
