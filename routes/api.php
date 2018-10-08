@@ -37,7 +37,7 @@ Route::group([
     'namespace' => 'Api',
     'middleware' => 'auth:api',
     'prefix' => 'inner',
-], function ($router) {
+], function () {
     Route::post('orders', 'OrderController@store')->name('api.orders');
     Route::post('refunds', 'OrderController@refund')->name('api.refunds');
 });
@@ -46,8 +46,9 @@ Route::group([
 /**
  * Wechat notify
  */
-Route::namespace('Notify')
-        ->group(function () {
-            Route::any('wechat/payment/notify', 'WebHookController@wechatPaymentNotify');
-            Route::any('wechat/refund/notify', 'WebHookController@wechatRefundNotify');
-        });
+Route::group([
+    'namespace' => 'Notify'
+], function () {
+    Route::any('wechat/payment/notify', 'WebHookController@wechatPaymentNotify');
+    Route::any('wechat/refund/notify', 'WebHookController@wechatRefundNotify');
+});
