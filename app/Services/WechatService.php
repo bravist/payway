@@ -9,9 +9,8 @@ class WechatService extends PaymentService
 {
     public function setConfig()
     {
-        $certPath = $this->channelPayWay->wx_certs ? json_decode($this->channelPayWay->wx_certs)->cert_path : '';
-        $keyPath = $this->channelPayWay->wx_certs ? json_decode($this->channelPayWay->wx_certs)->key_path : '';
-        
+        $certPath = $this->channelPayWay->wx_certs ? storage_path('wechat/' . json_decode($this->channelPayWay->wx_certs)->cert_path) : '';
+        $keyPath = $this->channelPayWay->wx_certs ? storage_path('wechat/' . json_decode($this->channelPayWay->wx_certs)->key_path): '';
         return [
             // 必要配置
             'app_id'             => $this->channelPayWay->app_id,

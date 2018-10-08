@@ -23,9 +23,11 @@ class ExternalRequestRefund
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($logger, $request, $response)
     {
-        //
+        $this->logger = $logger;
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**

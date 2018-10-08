@@ -29,7 +29,7 @@ class PaymentChannelPayWaysTableSeeder extends Seeder
                 'merchant_id' => '1515108091',
                 'app_id' => 'wx36ba7b235f88146e',
                 'app_secret' => 'Sichuandazhiruoyudianzishangwu88',
-                'wx_certs' => '{"cert_path":"https://ruoyubuy-public.oss-cn-beijing.aliyuncs.com/certs/wx/apiclient_cert.pem","key_path":"https://ruoyubuy-public.oss-cn-beijing.aliyuncs.com/certs/wx/apiclient_key.pem"}',
+                'wx_certs' => '{"cert_path":"apiclient_cert.pem","key_path":"apiclient_key.pem"}',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],

@@ -24,6 +24,18 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OrderController extends Controller
 {
+    protected function getChannel($clientId)
+    {
+        return Channel::where('client_id', $clientId)->first();
+    }
+
+    protected function getPayWay($way, $channelId)
+    {
+        return ChannelPayWay::where('payment_channel_id', $channelId)
+            ->where('way', $way)
+            ->first();
+    }
+
     /**
      * Create Order
      * @param  OrderRequest $request [description]
@@ -35,11 +47,9 @@ class OrderController extends Controller
         //接收创建订单参数
         //验证签名
         DB::beginTransaction();
+        $channel = $this->getChannel($this->client()->id);
+        $payWay = $this->getPayWay($request->pay_way, $channel->id);
         try {
-            $channel = Channel::where('client_id', $this->client()->id)->first();
-            $payWay = ChannelPayWay::where('payment_channel_id', $channel->id)
-                                    ->where('way', $request->pay_way)
-                                    ->first();
             $order = Order::where('out_trade_no', $request->out_trade_no)
                             ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANCELED])
                             ->where('payment_channel_id', $channel->id)
@@ -50,7 +60,10 @@ class OrderController extends Controller
                 //订单是否支的付成功
                 if ($order->status == Order::PAY_STATUS_SUCCESS) {
                     throw new HttpException(400, '订单已经支付成功');
-                    // abort(403, '订单已经支付成功');
+                }
+                //订单归属人
+                if ($this->client()->id != $order->client_id) {
+                    throw new HttpException(403, '没有权限操作该订单');
                 }
                 //订单是否过期
                 if (Carbon::now()->gte($order->expired_at)) {
@@ -136,28 +149,34 @@ class OrderController extends Controller
      * @param  [type] $request [description]
      * @return [type]          [description]
      */
-    public function refund($request)
+    public function refund(Request $request)
     {
         //提交订单号
-        $order = Order::where('trade_no', $request->trade_no)
+        $order = Order::where('out_trade_no', $request->out_trade_no)
             ->where('status', Order::PAY_STATUS_SUCCESS)
             ->first();
         if (!$order) {
-            abort(404, '没有该订单');
+            throw new HttpException(404, '没有该订单');
+        }
+        //订单归属人
+        if ($this->client()->id != $order->client_id) {
+            throw new HttpException(403, '没有权限操作该订单');
         }
         //是否已经退款完成
         if ($order->successfulRefund()) {
-            abort(404, '订单已经退款完成');
+            throw new HttpException(404, '订单已经退款完成');
         }
         if ($order->processingRefund()) {
-            abort(404, '订单正在退款中');
+            throw new HttpException(404, '订单正在退款中');
         }
         //创建退款单号, 开启事务
         DB::beginTransaction();
         try {
+            $channel = $this->getChannel($order->client_id);
+            $payWay = $this->getPayWay($order->pay_way, $order->payment_channel_id);
             $refund = $this->createRefund($order);
             //创建退款请求日志
-            Event::fire(new InternalRequestRefund($refund, $request));
+            Event::fire(new InternalRequestRefund($refund, $request, []));
             //创建渠道订单请求
             switch ($order->channel) {
                 case Order::CHANNEL_WECHAT:
@@ -168,8 +187,9 @@ class OrderController extends Controller
             Event::fire(new ExternalRequestRefund($refund, $request, $response));
             DB::commit();
             return new OrderResource($order);
-        } catch (\Exception $e) {
+        } catch (HttpException $e) {
             DB::rollBack();
+            abort($e->getStatusCode(), $e->getMessage());
         }
     }
 
