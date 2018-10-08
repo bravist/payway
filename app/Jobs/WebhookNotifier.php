@@ -38,10 +38,13 @@ class WebhookNotifier implements ShouldQueue
     {
         try {
             $params = json_decode($this->webhook->context, true);
-            $response = (new Client)->request('POST', $this->webhook->notify_url, [
+            logger($params);
+            logger($this->webhook->url);
+            $response = (new Client)->request('POST', $this->webhook->url, [
                 'form_params' => $params
             ]);
             $context = (string) $response->getBody();
+            logger($context);
             Event::fire(new InternalWebhook($order, $params, $context));
             if ($context == 'success') {
                 DB::transaction(function () use ($context) {
