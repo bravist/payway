@@ -17,7 +17,7 @@ use EasyWeChat\Kernel\Support\XML;
 use EasyWeChat\Kernel\Support;
 use Illuminate\Support\Facades\DB;
 
-class WebhookController extends Controller
+class WebHookController extends Controller
 {
     public function wechatPaymentNotify(Request $request)
     {
