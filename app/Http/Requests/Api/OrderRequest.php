@@ -57,8 +57,6 @@ class OrderRequest extends FormRequest
             'pay_way.required' => '付款方式不能为空',
             'pay_way.string' => '付款方式格式不正确',
             'pay_way.exists' => '不支持该付款方式',
-            'notify_url.required' => '回调URL不能为空',
-            'notify_url.url' => '回调URL格式错误',
         ];
     }
 }
