@@ -35,7 +35,6 @@ class OrderRequest extends FormRequest
                     'seller' => 'max:255',
                     'body' => 'max:255',
                     'goods_detail' => 'max:255',
-                    'notify_url' => 'bail|required|url',
                 ];
                 break;
             
