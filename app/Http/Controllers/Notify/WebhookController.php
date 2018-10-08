@@ -21,7 +21,10 @@ class WebhookController extends Controller
         $params = simplexml_load_string($request->getContent());
         $order = Order::where('trade_no', $params->out_trade_no)->first();
         if (! $order) {
-            return false;
+            $fail = function () {
+                return '订单不存在';
+            }
+            return $fail;
         }
         $config = [
             // 必要配置
@@ -30,8 +33,7 @@ class WebhookController extends Controller
             'key'                => $order->channelPayWay->app_secret,   // API 密钥
         ];
         $app = Factory::payment($config);
-        $response = $app->handlePaidNotify(function ($message, $fail) {
-            $order = Order::where('trade_no', $message['out_trade_no'])->first();
+        $response = $app->handlePaidNotify(function ($message, $fail, $order) {
             Event::fire(new ExternalWebhook($order, [], $message));
             if (! $order
                 || $order->status == Order::PAY_STATUS_SUCCESS

@@ -16,7 +16,8 @@
         "overtrue/laravel-wechat": "~4.0",
         "predis/predis": "^1.1",
         "rebing/graphql-laravel": "~1.14",
-        "ry/api-auth": "dev-master"
+        "ry/api-auth": "dev-master",
+        "ry/http-client":"dev-master"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
@@ -74,6 +75,10 @@
         "ry/api-auth": {
             "type": "vcs",
             "url": "https://gitlab.ruoyubuy.com/ry/api-auth.git"
+        },
+        "ry/http-client": {
+            "type": "vcs",
+            "url": "https://gitlab.ruoyubuy.com/ry/http-client.git"
         }
     }
 }
