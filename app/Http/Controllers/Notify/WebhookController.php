@@ -23,6 +23,7 @@ class WebhookController extends Controller
     {
         DB::beginTransaction();
         $params = XML::parse(strval($request->getContent()));
+        logger($request->getContent());
         unset($params['sign']);
         $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
         logger($sign, ['webhook']);
