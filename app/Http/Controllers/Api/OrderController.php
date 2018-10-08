@@ -89,7 +89,7 @@ class OrderController extends Controller
             return new OrderResource($order);
         } catch (HttpException $e) {
             DB::rollBack();
-            abort(500, $e->getMessage());
+            abort($e->getCode(), $e->getMessage());
         }
         //创建订单请求日志（业务系统请求网关）监听器
     }
