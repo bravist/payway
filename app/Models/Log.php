@@ -13,6 +13,10 @@ class Log extends Model
      */
     protected $guarded = [];
 
+    protected $hidden = [
+        'updated_at'
+    ];
+
     /**
      * 多态定义
      * @return [type] [description]

@@ -23,9 +23,9 @@ class WebhookController extends Controller
     {
         DB::beginTransaction();
         $params = XML::parse(strval($request->getContent()));
-        // unset($params['sign']);
-        // $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
-        // logger($sign, ['webhook']);
+        unset($params['sign']);
+        $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
+        logger($sign, ['webhook']);
         $order = Order::where('trade_no', $params['out_trade_no'])->first();
         if (! $order) {
             $fail = function () {
@@ -58,6 +58,29 @@ class WebhookController extends Controller
                     'channel' => $order->channel,
                     'context' => json_encode($message),
                 ]);
+                $order = $order->update([
+                    'status' => Order::PAY_STATUS_SUCCESS,
+                    'paid_at' => Carbon::now()
+                ]);
+                $notifyContext = [
+                    'trade_no' => $order->trade_no,
+                    'out_trade_no' => $order->out_trade_no,
+                    'channel' => $order->channel,
+                    'pay_way' => $order->pay_way,
+                    'subject' => $order->subject,
+                    'amount' => $order->amount,
+                    'body' => $order->body,
+                    'detail' => $order->detail,
+                    'extra' => $order->extra,
+                    'buyer' => $order->buyer,
+                    'seller' => $order->seller,
+                    'pay_at' => $order->pay_at,
+                    'paid_at' => $order->paid_at,
+                    'expired_at' => $order->expired_at,
+                    'status' => $order->status,
+                    'created_at' => $order->created_at,
+                    'channel_webhook' => $order->prepay->response
+                ];
                 $notifier = Webhook::create([
                     'client_id' => $order->client_id,
                     'trade_no' => $order->trade_no,
@@ -68,12 +91,8 @@ class WebhookController extends Controller
                     'channel_trade_no' => $message['transaction_id'],
                     'trade_no' => $order->trade_no,
                     'url' => $order->channel()->first()->notify_url,
-                    'context' => json_encode($order->toArray()),
+                    'context' => json_encode($notifyContext),
                     'channel_context' => json_encode($message),
-                ]);
-                $order->update([
-                    'status' => Order::PAY_STATUS_SUCCESS,
-                    'paid_at' => Carbon::now()
                 ]);
                 WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
                 DB::commit();

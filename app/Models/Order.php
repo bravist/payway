@@ -39,6 +39,10 @@ class Order extends Model
         'pay_at',
     ];
 
+    protected $hidden = [
+        'updated_at'
+    ];
+
     /**
     * Order has own Channel
     * @return App\Models\Channel
