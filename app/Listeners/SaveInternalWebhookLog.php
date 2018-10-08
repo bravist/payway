@@ -35,7 +35,7 @@ class SaveInternalWebhookLog
             'logger_type' => $event->logger->getMorphClass(),
             'request_url' => $event->request->fullUrl(),
             'request' => json_encode($event->request->all()),
-            'response' => ''
+            'response' => json_encode($event->response)
         ]);
     }
 }
