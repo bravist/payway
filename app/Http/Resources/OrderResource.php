@@ -14,6 +14,10 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $prepay = json_decode($this->prepay->response);
+        return [
+            'trade_no' => $this->trade_no,
+            'prepay_id' => $prepay->prepay_id
+        ];
     }
 }

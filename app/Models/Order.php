@@ -56,7 +56,7 @@ class Order extends Model
     {
         return $this->morphMany(Log::class, 'logger');
     }
-
+    
     /**
      * Channel pay way
      * @return [type] [description]

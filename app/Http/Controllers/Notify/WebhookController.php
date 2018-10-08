@@ -16,9 +16,20 @@ use EasyWeChat\Factory;
 
 class WebhookController extends Controller
 {
-    public function wechatPaymentNotify()
+    public function wechatPaymentNotify(Request $request)
     {
-        $app = Factory::payment();
+        $params = simplexml_load_string($request->getContent());
+        $order = Order::where('trade_no', $params->out_trade_no)->first();
+        if (! $order) {
+            return false;
+        }
+        $config = [
+            // 必要配置
+            'app_id'             => $order->channelPayWay->app_id,
+            'mch_id'             => $order->channelPayWay->merchant_id,
+            'key'                => $order->channelPayWay->app_secret,   // API 密钥
+        ];
+        $app = Factory::payment($config);
         $response = $app->handlePaidNotify(function ($message, $fail) {
             $order = Order::where('trade_no', $message['out_trade_no'])->first();
             Event::fire(new ExternalWebhook($order, [], $message));
