@@ -109,9 +109,27 @@ class WebHookController extends Controller
      * Refund notifier
      * @return [type] [description]
      */
-    public function wechatRefundNotify()
+    public function wechatRefundNotify(Request $request)
     {
-        $app = Factory::payment();
+        DB::beginTransaction();
+        $params = XML::parse(strval($request->getContent()));
+        logger($request->getContent());
+        // unset($params['sign']);
+        // $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
+        // logger($sign, ['webhook']);
+        $order = Order::where('trade_no', $params['out_trade_no'])->first();
+        if (! $order) {
+            $fail = function () {
+                return '订单不存在';
+            };
+        }
+        $config = [
+            // 必要配置
+            'app_id'             => $order->channelPayWay->app_id,
+            'mch_id'             => $order->channelPayWay->merchant_id,
+            'key'                => $order->channelPayWay->app_secret,   // API 密钥
+        ];
+        $app = Factory::payment($config);
         $response = $app->handleRefundedNotify(function ($message, $fail) {
             $refund = Refund::where('refund_no', $message['out_refund_no'])->first();
             Event::fire(new ExternalWebhook($refund, [], $message));
@@ -143,7 +161,6 @@ class WebHookController extends Controller
                     'trade_no' => $refund->trade_no,
                     'url' => $refund->order->channel->notify_url,
                     'context' => json_encode($refund->toArray()),
-                    'channel_context' => json_encode($message),
                 ]);
                 $refund->update([
                     'status' => Refund::STATUS_SUCCESS,
