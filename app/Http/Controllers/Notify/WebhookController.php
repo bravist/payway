@@ -58,10 +58,11 @@ class WebhookController extends Controller
                     'channel' => $order->channel,
                     'context' => json_encode($message),
                 ]);
-                $order = $order->update([
+                $order->update([
                     'status' => Order::PAY_STATUS_SUCCESS,
                     'paid_at' => Carbon::now()
                 ]);
+                $order = $order->fresh();
                 $notifyContext = [
                     'trade_no' => $order->trade_no,
                     'out_trade_no' => $order->out_trade_no,
