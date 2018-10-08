@@ -76,6 +76,9 @@ class OrderController extends Controller
                     $response = $payment->pay($params);
                     break;
             }
+            if ($response['return_code'] == 'FAIL') {
+                throw new HttpException(404, $response['return_msg']);
+            }
             //创建生成小程序支付请求日志
             Event::fire(new ExternalRequestOrder($order, $params, $response));
             //更新订单状态
@@ -84,7 +87,7 @@ class OrderController extends Controller
             ]);
             DB::commit();
             return new OrderResource($order);
-        } catch (\Exception $e) {
+        } catch (HttpException $e) {
             DB::rollBack();
             abort(500, $e->getMessage());
         }
