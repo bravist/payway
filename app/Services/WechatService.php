@@ -44,4 +44,9 @@ class WechatService extends PaymentService
             ]
         );
     }
+
+    public function queryRefund()
+    {
+        return $this->getApp()->refund->queryByOutRefundNumber($this->refund->refund_no);
+    }
 }

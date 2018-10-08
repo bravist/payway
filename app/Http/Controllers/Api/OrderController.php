@@ -166,15 +166,14 @@ class OrderController extends Controller
         if ($order->successfulRefund()) {
             throw new HttpException(404, '订单已经退款完成');
         }
+        $channel = $this->getChannel($order->client_id);
+        $payWay = $this->getPayWay($order->pay_way, $order->payment_channel_id);
         if ($order->processingRefund()) {
-            //退款中
-            dd(111);
+            throw new HttpException(404, '订单正在退款中');
         }
         //创建退款单号, 开启事务
         DB::beginTransaction();
         try {
-            $channel = $this->getChannel($order->client_id);
-            $payWay = $this->getPayWay($order->pay_way, $order->payment_channel_id);
             $refund = $this->createRefund($order);
             //创建退款请求日志
             Event::fire(new InternalRequestRefund($refund, $request, []));
