@@ -92,7 +92,6 @@ class WebhookController extends Controller
                     'trade_no' => $order->trade_no,
                     'url' => $order->channel()->first()->notify_url,
                     'context' => json_encode($notifyContext),
-                    'channel_context' => json_encode($message),
                 ]);
                 WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
                 DB::commit();
