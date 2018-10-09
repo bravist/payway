@@ -69,7 +69,7 @@ class Refund extends Model
      * Prepay
      * @return [type] [description]
      */
-    public function prepay()
+    public function getPrepayAttribute()
     {
         $event = Event::where('name', Event::EXTERNAL_REQUEST_REFUND)->first();
         return $this->logs()->where('payment_event_id', $event->id)->first();
