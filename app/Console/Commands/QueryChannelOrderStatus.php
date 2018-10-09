@@ -79,7 +79,24 @@ class QueryChannelOrderStatus extends Command
         logger($res);
         if ($res['return_code'] == 'SUCCESS') {
             if ($res['trade_state'] == self::WECHAT_TRADE_STATUS_SUCCESS) {
-                //TODO
+                $order->update([
+                    'status' => Order::PAY_STATUS_SUCCESS,
+                    'paid_at' => Carbon::now()
+                ]);
+                $order = $order->fresh();
+                $notifier = Webhook::create([
+                    'client_id' => $order->client_id,
+                    'trade_no' => $order->trade_no,
+                    'payment_channel_id' => $order->payment_channel_id,
+                    'webhookable_id' => $order->id,
+                    'webhookable_type' => $order->getMorphClass(),
+                    'out_trade_no' => $order->out_trade_no,
+                    'channel_trade_no' => $message['transaction_id'],
+                    'trade_no' => $order->trade_no,
+                    'url' => $order->channel()->first()->notify_url,
+                    'context' => $this->notifyContext($order)
+                ]);
+                WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
                 Event::fire(new ExternalQueryOrder($order, ExternalQueryOrder::PAY_STATUS_PAID, [$order->trade_no], $res));
             } else {
                 //关闭订单
@@ -91,5 +108,36 @@ class QueryChannelOrderStatus extends Command
         } else {
             Event::fire(new ExternalQueryOrder($order, ExternalQueryOrder::PAY_STATUS_QUERY, [$order->trade_no], $res));
         }
+    }
+
+    /**
+     * [notifyContext description]
+     * @param  [type] $order  [description]
+     * @param  [type] $refund [description]
+     * @return [type]         [description]
+     */
+    protected function notifyContext($order, $refund = null)
+    {
+        $context = [
+            'trade_no' => $order->trade_no,
+            'out_trade_no' => $order->out_trade_no,
+            'channel' => $order->channel,
+            'pay_way' => $order->pay_way,
+            'subject' => $order->subject,
+            'amount' => $order->amount,
+            'body' => $order->body,
+            'detail' => $order->detail,
+            'extra' => $order->extra,
+            'buyer' => $order->buyer,
+            'seller' => $order->seller,
+            'pay_at' => $order->pay_at,
+            'paid_at' => $order->paid_at,
+            'expired_at' => $order->expired_at,
+            'order_status' => $order->status,
+            'refund_status' => $refund ? $refund->status : '',
+            'order_channel_webhook' => $order->prepay->response,
+            'refund_channel_webhook' => $refund->prepay ? $refund->prepay->response : '',
+        ];
+        return json_encode($context);
     }
 }

@@ -40,33 +40,33 @@ class WebHookController extends Controller
                 && $message['result_code'] == 'SUCCESS'
                 ) { // return_code 表示通信状态，不代表支付状态
                     ChannelWebhook::create([
-                    'client_id' => $order->client_id,
-                    'webhookable_id' => $order->id,
-                    'webhookable_type' => $order->getMorphClass(),
-                    'trade_no' => $order->trade_no,
-                    'payment_channel_id' => $order->payment_channel_id,
-                    'out_trade_no' => $order->out_trade_no,
-                    'channel_trade_no' => $message['transaction_id'],
-                    'channel' => $order->channel,
-                    'context' => json_encode($message),
-                ]);
+                        'client_id' => $order->client_id,
+                        'webhookable_id' => $order->id,
+                        'webhookable_type' => $order->getMorphClass(),
+                        'trade_no' => $order->trade_no,
+                        'payment_channel_id' => $order->payment_channel_id,
+                        'out_trade_no' => $order->out_trade_no,
+                        'channel_trade_no' => $message['transaction_id'],
+                        'channel' => $order->channel,
+                        'context' => json_encode($message),
+                    ]);
                     $order->update([
-                    'status' => Order::PAY_STATUS_SUCCESS,
-                    'paid_at' => Carbon::now()
-                ]);
+                        'status' => Order::PAY_STATUS_SUCCESS,
+                        'paid_at' => Carbon::now()
+                    ]);
                     $order = $order->fresh();
                     $notifier = Webhook::create([
-                    'client_id' => $order->client_id,
-                    'trade_no' => $order->trade_no,
-                    'payment_channel_id' => $order->payment_channel_id,
-                    'webhookable_id' => $order->id,
-                    'webhookable_type' => $order->getMorphClass(),
-                    'out_trade_no' => $order->out_trade_no,
-                    'channel_trade_no' => $message['transaction_id'],
-                    'trade_no' => $order->trade_no,
-                    'url' => $order->channel()->first()->notify_url,
-                    'context' => $this->notifyContext($order)
-                ]);
+                        'client_id' => $order->client_id,
+                        'trade_no' => $order->trade_no,
+                        'payment_channel_id' => $order->payment_channel_id,
+                        'webhookable_id' => $order->id,
+                        'webhookable_type' => $order->getMorphClass(),
+                        'out_trade_no' => $order->out_trade_no,
+                        'channel_trade_no' => $message['transaction_id'],
+                        'trade_no' => $order->trade_no,
+                        'url' => $order->channel()->first()->notify_url,
+                        'context' => $this->notifyContext($order)
+                    ]);
                     WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
                     DB::commit();
                 } else {
