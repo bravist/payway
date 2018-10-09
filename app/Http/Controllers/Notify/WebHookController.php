@@ -160,6 +160,14 @@ class WebHookController extends Controller
                         'channel' => $refund->order->channel,
                         'context' => json_encode($reqInfo),
                     ]);
+                    //退款成功
+                    if ($reqInfo['refund_status'] == 'SUCCESS') {
+                        $refund->update([
+                        'status' => Refund::STATUS_SUCCESS,
+                        'refunded_at' => $message['success_time'],
+                    ]);
+                    WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
+                    $refund = $refund->fresh();
                     //网关通知
                     $notifier = Webhook::create([
                         'client_id' => $refund->order->client_id,
@@ -173,14 +181,7 @@ class WebHookController extends Controller
                         'url' => $refund->order->channel()->first()->notify_url,
                         'context' => $this->notifyContext($refund->order, $refund)
                     ]);
-                    //退款成功
-                    if ($reqInfo['refund_status'] == 'SUCCESS') {
-                        $refund->update([
-                        'status' => Refund::STATUS_SUCCESS,
-                        'refunded_at' => $message['success_time'],
-                    ]);
-                        WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
-                        DB::commit();
+                    DB::commit();
                     }
                 } else {
                     return $fail('通信失败，请稍后再通知我');
