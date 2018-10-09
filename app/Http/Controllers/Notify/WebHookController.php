@@ -156,7 +156,7 @@ class WebHookController extends Controller
                     'trade_no' => $refund->trade_no,
                     'payment_channel_id' => $refund->order->payment_channel_id,
                     'out_trade_no' => $refund->order->out_trade_no,
-                    'channel_trade_no' => $message['refund_id'],
+                    'channel_trade_no' => $reqInfo['refund_id'],
                     'channel' => $refund->order->channel,
                     'context' => json_encode($reqInfo),
                 ]);
@@ -168,7 +168,7 @@ class WebHookController extends Controller
                     'webhookable_id' => $refund->id,
                     'webhookable_id' => $refund->getMorphClass(),
                     'out_trade_no' => $refund->out_trade_no,
-                    'channel_trade_no' => $message['refund_id'],
+                    'channel_trade_no' => $reqInfo['refund_id'],
                     'trade_no' => $refund->trade_no,
                     'url' => $refund->order->channel()->first()->notify_url,
                     'context' => $this->notifyContext($refund->order, $refund)
