@@ -104,6 +104,7 @@ class WebHookController extends Controller
     protected function notifyContext($order, $refund = null)
     {
         $context = [
+            'type' => $refund ? 'refund' : 'order',
             'trade_no' => $order->trade_no,
             'out_trade_no' => $order->out_trade_no,
             'channel' => $order->channel,
@@ -117,6 +118,7 @@ class WebHookController extends Controller
             'seller' => $order->seller,
             'pay_at' => $order->pay_at,
             'paid_at' => $order->paid_at,
+            'refunded_at' => $refund ? $refund->refunded_at : '',
             'expired_at' => $order->expired_at,
             'order_status' => $order->status,
             'refund_status' => $refund ? $refund->status : '',
