@@ -12,10 +12,8 @@
         "laravel/tinker": "^1.0",
         "liyu/signature": "^0.4",
         "moontoast/math": "^1.1",
-        "noh4ck/graphiql": "@dev",
         "overtrue/laravel-wechat": "~4.0",
         "predis/predis": "^1.1",
-        "rebing/graphql-laravel": "~1.14",
         "ry/api-auth": "dev-master",
         "ry/http-client":"dev-master"
     },
