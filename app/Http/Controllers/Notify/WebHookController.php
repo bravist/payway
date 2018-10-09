@@ -152,7 +152,7 @@ class WebHookController extends Controller
                     ChannelWebhook::create([
                     'client_id' => $refund->order->client_id,
                     'webhookable_id' => $refund->id,
-                    'webhookable_id' => $refund->getMorphClass(),
+                    'webhookable_type' => $refund->getMorphClass(),
                     'trade_no' => $refund->trade_no,
                     'payment_channel_id' => $refund->order->payment_channel_id,
                     'out_trade_no' => $refund->order->out_trade_no,
@@ -166,7 +166,7 @@ class WebHookController extends Controller
                     'trade_no' => $refund->trade_no,
                     'payment_channel_id' => $refund->order->channel->id,
                     'webhookable_id' => $refund->id,
-                    'webhookable_id' => $refund->getMorphClass(),
+                    'webhookable_type' => $refund->getMorphClass(),
                     'out_trade_no' => $refund->out_trade_no,
                     'channel_trade_no' => $reqInfo['refund_id'],
                     'trade_no' => $refund->trade_no,
