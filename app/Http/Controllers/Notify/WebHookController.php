@@ -123,7 +123,7 @@ class WebHookController extends Controller
             'order_status' => $order->status,
             'refund_status' => $refund ? $refund->status : '',
             'order_channel_webhook' => $order->prepay->response,
-            'refund_channel_webhook' => $refund->prepay ? $refund->prepay->response : '',
+            'refund_channel_webhook' => $refund && $refund->prepay ? $refund->prepay->response : '',
         ];
         return json_encode($context);
     }

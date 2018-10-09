@@ -130,9 +130,9 @@ class QueryChannelOrderStatus extends Command
      * @param  [type] $refund [description]
      * @return [type]         [description]
      */
-        protected function notifyContext($order, $refund = null)
-        {
-            $context = [
+    protected function notifyContext($order, $refund = null)
+    {
+        $context = [
                 'type' => $refund ? 'refund' : 'order',
                 'trade_no' => $order->trade_no,
                 'out_trade_no' => $order->out_trade_no,
@@ -152,8 +152,8 @@ class QueryChannelOrderStatus extends Command
                 'order_status' => $order->status,
                 'refund_status' => $refund ? $refund->status : '',
                 'order_channel_webhook' => $order->prepay->response,
-                'refund_channel_webhook' => $refund->prepay ? $refund->prepay->response : '',
+                'refund_channel_webhook' => $refund && $refund->prepay ? $refund->prepay->response : '',
             ];
-            return json_encode($context);
-        }
+        return json_encode($context);
+    }
 }
