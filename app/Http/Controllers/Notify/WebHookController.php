@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Notify;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Events\ExternalWebhook;
@@ -16,38 +15,28 @@ use EasyWeChat\Factory;
 use EasyWeChat\Kernel\Support\XML;
 use EasyWeChat\Kernel\Support;
 use Illuminate\Support\Facades\DB;
+use App\Models\ChannelPayWay;
 
 class WebHookController extends Controller
 {
-    public function wechatPaymentNotify(Request $request)
+    public function wechatPaymentNotify($appId)
     {
-        DB::beginTransaction();
-        $params = XML::parse(strval($request->getContent()));
-        logger($request->getContent());
-        unset($params['sign']);
-        $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
-        logger($sign, ['webhook']);
-        $order = Order::where('trade_no', $params['out_trade_no'])->first();
-        if (! $order) {
-            $fail = function () {
-                return '订单不存在';
-            };
-        }
-        $config = [
-            // 必要配置
-            'app_id'             => $order->channelPayWay->app_id,
-            'mch_id'             => $order->channelPayWay->merchant_id,
-            'key'                => $order->channelPayWay->app_secret,   // API 密钥
-        ];
-        $app = Factory::payment($config);
-        $response = $app->handlePaidNotify(function ($message, $fail) use ($order) {
+        $response = Factory::payment($this->paymentConfig($appId))
+            ->handlePaidNotify(function ($message, $fail) use ($order) {
+            //开启事务
+            DB::beginTransaction();
+            //记录日志
             Event::fire(new ExternalWebhook($order, [], $message));
+            //订单异常检查
             if (! $order
                 || $order->status == Order::PAY_STATUS_SUCCESS
                 || $order->status == Order::PAY_STATUS_CLOSED) {
                 return true;
             }
-            if ($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
+            //业务判断
+            if ($message['return_code'] == 'SUCCESS'
+                && $message['result_code'] == 'SUCCESS'
+                ) { // return_code 表示通信状态，不代表支付状态
                 ChannelWebhook::create([
                     'client_id' => $order->client_id,
                     'webhookable_id' => $order->id,
@@ -64,24 +53,6 @@ class WebHookController extends Controller
                     'paid_at' => Carbon::now()
                 ]);
                 $order = $order->fresh();
-                $notifyContext = [
-                    'trade_no' => $order->trade_no,
-                    'out_trade_no' => $order->out_trade_no,
-                    'channel' => $order->channel,
-                    'pay_way' => $order->pay_way,
-                    'subject' => $order->subject,
-                    'amount' => $order->amount,
-                    'body' => $order->body,
-                    'detail' => $order->detail,
-                    'extra' => $order->extra,
-                    'buyer' => $order->buyer,
-                    'seller' => $order->seller,
-                    'pay_at' => $order->pay_at,
-                    'paid_at' => $order->paid_at,
-                    'expired_at' => $order->expired_at,
-                    'status' => $order->status,
-                    'channel_webhook' => $order->prepay->response
-                ];
                 $notifier = Webhook::create([
                     'client_id' => $order->client_id,
                     'trade_no' => $order->trade_no,
@@ -92,7 +63,7 @@ class WebHookController extends Controller
                     'channel_trade_no' => $message['transaction_id'],
                     'trade_no' => $order->trade_no,
                     'url' => $order->channel()->first()->notify_url,
-                    'context' => json_encode($notifyContext),
+                    'context' => $this->notifyContext($order)
                 ]);
                 WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
                 DB::commit();
@@ -106,50 +77,90 @@ class WebHookController extends Controller
     }
 
     /**
-     * Refund notifier
-     * @return [type] [description]
+     * [paymentConfig description]
+     * @param  [type] $appId [description]
+     * @return [type]        [description]
      */
-    public function wechatRefundNotify(Request $request)
+    protected function paymentConfig($appId)
     {
-        DB::beginTransaction();
-        $params = XML::parse(strval($request->getContent()));
-        logger($request->getContent());
-        // unset($params['sign']);
-        // $sign = Support\generate_sign($params, 'Sichuandazhiruoyudianzishangwu88');
-        // logger($sign, ['webhook']);
-        $order = Order::where('trade_no', $params['out_trade_no'])->first();
-        if (! $order) {
-            $fail = function () {
-                return '订单不存在';
-            };
+        $channelPayWay = ChannelPayWay::where('app_id', $appId)->first();
+        if (! $channelPayWay) {
+            return [];
         }
-        $config = [
+        return [
             // 必要配置
-            'app_id'             => $order->channelPayWay->app_id,
-            'mch_id'             => $order->channelPayWay->merchant_id,
-            'key'                => $order->channelPayWay->app_secret,   // API 密钥
+            'app_id' => $channelPayWay->app_id,
+            'mch_id' => $channelPayWay->merchant_id,
+            'key'    => $channelPayWay->app_secret,   // API 密钥
         ];
-        $app = Factory::payment($config);
-        $response = $app->handleRefundedNotify(function ($message, $fail) {
-            $refund = Refund::where('refund_no', $message['out_refund_no'])->first();
-            Event::fire(new ExternalWebhook($refund, [], $message));
+    }
+
+    /**
+     * [notifyContext description]
+     * @param  [type] $order  [description]
+     * @param  [type] $refund [description]
+     * @return [type]         [description]
+     */
+    protected function notifyContext($order, $refund = null)
+    {
+        $context = [
+            'trade_no' => $order->trade_no,
+            'out_trade_no' => $order->out_trade_no,
+            'channel' => $order->channel,
+            'pay_way' => $order->pay_way,
+            'subject' => $order->subject,
+            'amount' => $order->amount,
+            'body' => $order->body,
+            'detail' => $order->detail,
+            'extra' => $order->extra,
+            'buyer' => $order->buyer,
+            'seller' => $order->seller,
+            'pay_at' => $order->pay_at,
+            'paid_at' => $order->paid_at,
+            'expired_at' => $order->expired_at,
+            'order_status' => $order->status,
+            'refund_status' => $refund ? $refund->status : ,
+            'order_channel_webhook' => $order->prepay->response,
+            'refund_channel_webhook' => $refund ? $refund->prepay->response,
+        ];
+        return json_encode($context);
+    }
+
+    /**
+     * [wechatRefundNotify description]
+     * @param  [type] $appId [description]
+     * @return [type]        [description]
+     */
+    public function wechatRefundNotify($appId)
+    {
+        $response = Factory::payment($this->paymentConfig($appId))
+            ->handleRefundedNotify(function ($message, $reqInfo, $fail) {
+            //开启事务
+            DB::beginTransaction();
+            //退款单是否存在
+            $refund = Refund::where('refund_no', $reqInfo['out_refund_no'])->first();
+            //记录日志
+            Event::fire(new ExternalWebhook($refund, [], $reqInfo));
+            //退款是否异常
             if (! $refund
                 || $refund->status == Refund::STATUS_CLOSED
                 || $refund->status == Refund::STATUS_SUCCESS) {
                 return true;
             }
             if ($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
+                // 渠道通知
                 ChannelWebhook::create([
-                    'client_id' => $refund->order->channel->client_id,
+                    'client_id' => $refund->order->client_id,
                     'webhookable_id' => $refund->id,
                     'webhookable_id' => $refund->getMorphClass(),
                     'trade_no' => $refund->trade_no,
-                    'payment_channel_id' => $refund->order->channel->id,
-                    'out_trade_no' => $refund->out_trade_no,
+                    'payment_channel_id' => $refund->order->payment_channel_id,
+                    'out_trade_no' => $refund->order->out_trade_no,
                     'channel_trade_no' => $message['refund_id'],
                     'channel' => $refund->order->channel,
-                    'context' => json_encode($message),
+                    'context' => json_encode($reqInfo),
                 ]);
+                //网关通知
                 $notifier = Webhook::create([
                     'client_id' => $refund->order->channel->client_id,
                     'trade_no' => $refund->trade_no,
@@ -159,15 +170,18 @@ class WebHookController extends Controller
                     'out_trade_no' => $refund->out_trade_no,
                     'channel_trade_no' => $message['refund_id'],
                     'trade_no' => $refund->trade_no,
-                    'url' => $refund->order->channel->notify_url,
-                    'context' => json_encode($refund->toArray()),
+                    'url' => $refund->order->channel()->first()->notify_url,
+                    'context' => $this->notifyContext($refund->order, $refund)
                 ]);
-                $refund->update([
-                    'status' => Refund::STATUS_SUCCESS,
-                    'refunded_at' => $message['success_time'],
-                ]);
-                WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
-                DB::commit();
+                //退款成功
+                if ($reqInfo['refund_status'] == 'SUCCESS') {
+                    $refund->update([
+                        'status' => Refund::STATUS_SUCCESS,
+                        'refunded_at' => $message['success_time'],
+                    ]);
+                    WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
+                    DB::commit();
+                }
             } else {
                 return $fail('通信失败，请稍后再通知我');
             }

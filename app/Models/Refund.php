@@ -17,6 +17,8 @@ class Refund extends Model
      * @var array
      */
     protected $guarded = [];
+
+    protected $appends = ['prepay'];
     
     /**
      * Polymorphic Relations
@@ -61,5 +63,15 @@ class Refund extends Model
     public function channelWebhooks()
     {
         return $this->morphMany(ChannelWebhook::class, 'webhookable');
+    }
+
+    /**
+     * Prepay
+     * @return [type] [description]
+     */
+    public function prepay()
+    {
+        $event = Event::where('name', Event::EXTERNAL_REQUEST_REFUND)->first();
+        return $this->logs()->where('payment_event_id', $event->id)->first();
     }
 }

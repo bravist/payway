@@ -49,6 +49,6 @@ Route::group([
 Route::group([
     'namespace' => 'Notify'
 ], function () {
-    Route::any('wechat/payment/notify', 'WebHookController@wechatPaymentNotify');
-    Route::any('wechat/refund/notify', 'WebHookController@wechatRefundNotify');
+    Route::any('wechat/payment/notify/{app_id}', 'WebHookController@wechatPaymentNotify');
+    Route::any('wechat/refund/notify/{app_id}', 'WebHookController@wechatRefundNotify');
 });

@@ -20,9 +20,8 @@ class WechatMiniService extends WechatService
             'total_fee' => $this->order->amount,
             'trade_type' => 'JSAPI',
             'openid' => $this->order->buyer,
-            'notify_url' => config('wechat.payment.default.notify_url')
+            'notify_url' => config('wechat.payment.default.notify_url') . '/' . $this->channelPayWay->app_id,
         ];
-        logger($params);
         return $this->getApp()->order->unify($params);
     }
 }

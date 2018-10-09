@@ -40,7 +40,7 @@ class WechatService extends PaymentService
             [
                 // 可在此处传入其他参数，详细参数见微信支付文档
                 'refund_desc' => $this->refund->reason,
-                'notify_url' => config('wechat.payment.refund.notify_url')
+                'notify_url' => config('wechat.payment.refund.notify_url') . '/' . $this->channelPayWay->app_id,
             ]
         );
     }
