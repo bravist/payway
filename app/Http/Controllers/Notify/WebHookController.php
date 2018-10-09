@@ -24,7 +24,7 @@ class WebHookController extends Controller
                 //开启事务
                 DB::beginTransaction();
                 //退款单是否存在
-                $order = Order::where('refund_no', $message['out_trade_no'])->first();
+                $order = Order::where('trade_no', $message['out_trade_no'])->first();
                 //记录日志
                 Event::fire(new ExternalWebhook($order, [], $message));
                 //订单异常检查
