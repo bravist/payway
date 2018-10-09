@@ -22,9 +22,11 @@ class WebHookController extends Controller
     public function wechatPaymentNotify($appId)
     {
         $response = Factory::payment($this->paymentConfig($appId))
-            ->handlePaidNotify(function ($message, $fail) use ($order) {
+            ->handlePaidNotify(function ($message, $fail) {
                 //开启事务
                 DB::beginTransaction();
+                //退款单是否存在
+                $order = Order::where('refund_no', $message['out_trade_no'])->first();
                 //记录日志
                 Event::fire(new ExternalWebhook($order, [], $message));
                 //订单异常检查
