@@ -8,6 +8,9 @@ use EasyWeChat\Factory;
 use App\Models\Order;
 use Illuminate\Support\Facades\Event;
 use Carbon\Carbon;
+use App\Models\ChannelWebhook;
+use App\Models\Webhook;
+use App\Jobs\WebhookNotifier;
 
 class QueryChannelOrderStatus extends Command
 {
@@ -79,6 +82,17 @@ class QueryChannelOrderStatus extends Command
         logger($res);
         if ($res['return_code'] == 'SUCCESS') {
             if ($res['trade_state'] == self::WECHAT_TRADE_STATUS_SUCCESS) {
+                ChannelWebhook::create([
+                    'client_id' => $order->client_id,
+                    'webhookable_id' => $order->id,
+                    'webhookable_type' => $order->getMorphClass(),
+                    'trade_no' => $order->trade_no,
+                    'payment_channel_id' => $order->payment_channel_id,
+                    'out_trade_no' => $order->out_trade_no,
+                    'channel_trade_no' => $message['transaction_id'],
+                    'channel' => $order->channel,
+                    'context' => json_encode($message),
+                ]);
                 $order->update([
                     'status' => Order::PAY_STATUS_SUCCESS,
                     'paid_at' => Carbon::now()
