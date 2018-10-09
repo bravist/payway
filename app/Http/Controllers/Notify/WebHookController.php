@@ -164,7 +164,7 @@ class WebHookController extends Controller
                     if ($reqInfo['refund_status'] == 'SUCCESS') {
                         $refund->update([
                         'status' => Refund::STATUS_SUCCESS,
-                        'refunded_at' => $message['success_time'],
+                        'refunded_at' => $reqInfo['success_time'],
                     ]);
                     WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
                     $refund = $refund->fresh();
