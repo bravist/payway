@@ -76,6 +76,7 @@ class QueryChannelOrderStatus extends Command
         ];
         $app = Factory::payment($config);
         $res = $app->order->queryByOutTradeNumber($order->trade_no);
+        logger($res);
         if ($res['return_code'] == 'SUCCESS') {
             if ($res['trade_state'] == self::WECHAT_TRADE_STATUS_SUCCESS) {
                 //TODO
