@@ -31,8 +31,8 @@ class SaveExternalWebhookLog
         $paymentEvent = Event::where('name', Event::EXTERNAL_WEHOOK)->first();
         Log::create([
             'payment_event_id' => $paymentEvent->id,
-            'logger_id' => $event->logger->id,
-            'logger_type' => $event->logger->getMorphClass(),
+            'logger_id' => $event ? $event->logger->id : 0,
+            'logger_type' => $event ? $event->logger->getMorphClass() : '',
             'request_url' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
             'request' => json_encode($event->request),
             'response' => json_encode($event->response)
