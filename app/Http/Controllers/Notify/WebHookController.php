@@ -163,25 +163,25 @@ class WebHookController extends Controller
                     //退款成功
                     if ($reqInfo['refund_status'] == 'SUCCESS') {
                         $refund->update([
-                        'status' => Refund::STATUS_SUCCESS,
-                        'refunded_at' => $reqInfo['success_time'],
-                    ]);
-                    WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
-                    $refund = $refund->fresh();
-                    //网关通知
-                    $notifier = Webhook::create([
-                        'client_id' => $refund->order->client_id,
-                        'trade_no' => $refund->trade_no,
-                        'payment_channel_id' => $refund->order->payment_channel_id,
-                        'webhookable_id' => $refund->id,
-                        'webhookable_type' => $refund->getMorphClass(),
-                        'out_trade_no' => $refund->out_trade_no,
-                        'channel_trade_no' => $reqInfo['refund_id'],
-                        'trade_no' => $refund->trade_no,
-                        'url' => $refund->order->channel()->first()->notify_url,
-                        'context' => $this->notifyContext($refund->order, $refund)
-                    ]);
-                    DB::commit();
+                            'status' => Refund::STATUS_SUCCESS,
+                            'refunded_at' => $reqInfo['success_time'],
+                        ]);
+                        $refund = $refund->fresh();
+                        //网关通知
+                        $notifier = Webhook::create([
+                            'client_id' => $refund->order->client_id,
+                            'trade_no' => $refund->trade_no,
+                            'payment_channel_id' => $refund->order->payment_channel_id,
+                            'webhookable_id' => $refund->id,
+                            'webhookable_type' => $refund->getMorphClass(),
+                            'out_trade_no' => $refund->out_trade_no,
+                            'channel_trade_no' => $reqInfo['refund_id'],
+                            'trade_no' => $refund->trade_no,
+                            'url' => $refund->order->channel()->first()->notify_url,
+                            'context' => $this->notifyContext($refund->order, $refund)
+                        ]);
+                        WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
+                        DB::commit();
                     }
                 } else {
                     return $fail('通信失败，请稍后再通知我');
