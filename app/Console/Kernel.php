@@ -26,7 +26,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('command:query-channel-order-status')
-                ->timezone('Aisa/Shanghai')
                 ->onOneServer()
                 ->withoutOverlapping()
                 ->hourly();
