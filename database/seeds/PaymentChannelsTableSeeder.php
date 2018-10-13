@@ -16,7 +16,16 @@ class PaymentChannelsTableSeeder extends Seeder
             [
                 'client_id' => '1',
                 'channel' => 'wechat',
-                'desc' => '微信支付',
+                'desc' => '若愚优选微信支付',
+                'return_url' => '',
+                'notify_url' => 'https://mall-dev.ruoyubuy.com/api/inner/payway/callback',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'client_id' => '2',
+                'channel' => 'wechat',
+                'desc' => '若愚精选微信支付',
                 'return_url' => '',
                 'notify_url' => 'https://mall-dev.ruoyubuy.com/api/inner/payway/callback',
                 'created_at' => Carbon::now(),
