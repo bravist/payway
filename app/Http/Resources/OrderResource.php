@@ -23,6 +23,7 @@ class OrderResource extends JsonResource
             'timeStamp' => time(),
             'nonceStr' => Support\Str::quickRandom(20),
             'package' => 'prepay_id=' . $prepay->prepay_id,
+            'prepay_id' => $prepay->prepay_id,
             'signType' => 'MD5',
         ];
         switch ($this->pay_way) {
