@@ -151,6 +151,8 @@ class OrderController extends Controller
      */
     public function refund(Request $request)
     {
+        //创建退款单号, 开启事务
+        DB::beginTransaction();
         //提交订单号
         $order = Order::where('out_trade_no', $request->out_trade_no)
             ->where('status', Order::PAY_STATUS_SUCCESS)
@@ -171,8 +173,6 @@ class OrderController extends Controller
         if ($order->processingRefund()) {
             throw new HttpException(404, '订单正在退款中');
         }
-        //创建退款单号, 开启事务
-        DB::beginTransaction();
         try {
             $refund = $this->createRefund($order);
             //创建退款请求日志
