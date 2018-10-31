@@ -2567,7 +2567,7 @@
             "source": {
                 "type": "git",
                 "url": "https://gitlab.ruoyubuy.com/ry/model.git",
-                "reference": "fe3423028a8924457630c24ec8ff2b9c38b9decc"
+                "reference": "3d9e83e6654cf82f2f760271342afa2d9e21a882"
             },
             "require": {
                 "laravel/framework": "5.6.*",
@@ -2600,7 +2600,7 @@
                 "wiki": "https://gitlab.ruoyubuy.com/ry/model",
                 "source": "https://gitlab.ruoyubuy.com/ry/model"
             },
-            "time": "2018-10-31T04:01:10+00:00"
+            "time": "2018-10-31T05:30:47+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
