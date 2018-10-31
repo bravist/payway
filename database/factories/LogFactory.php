@@ -2,11 +2,11 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\Models\Log::class, function (Faker $faker) {
+$factory->define(Ry\Model\Payway\Log::class, function (Faker $faker) {
     return [
-        'payment_event_id' => App\Models\Event::all()->random()->id,
-        'logger_id' => App\Models\Order::all()->random()->id,
-        'logger_type' => App\Models\Order::all()->random()->getMorphClass(),
+        'payment_event_id' => Ry\Model\Payway\Event::all()->random()->id,
+        'logger_id' => Ry\Model\Payway\Order::all()->random()->id,
+        'logger_type' => Ry\Model\Payway\Order::all()->random()->getMorphClass(),
         'context' => $faker->sentence(),
     ];
 });

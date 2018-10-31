@@ -16,7 +16,8 @@
         "predis/predis": "^1.1",
         "ry/api-auth": "dev-master",
         "ry/http-client":"dev-master",
-        "ry/log": "dev-master"
+        "ry/log": "dev-master",
+        "ry/model": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
@@ -82,6 +83,10 @@
         "ry/log": {
             "type": "vcs",
             "url": "https://gitlab.ruoyubuy.com/ry/log.git"
+        },
+        "ry/model": {
+            "type": "vcs",
+            "url": "https://gitlab.ruoyubuy.com/ry/model.git"
         }
     }
 }

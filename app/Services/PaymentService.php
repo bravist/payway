@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Order;
-use App\Models\Channel;
-use App\Models\ChannelPayWay;
-use App\Models\Refund;
+use Ry\Model\Payway\Order;
+use Ry\Model\Payway\Channel;
+use Ry\Model\Payway\ChannelPayWay;
+use Ry\Model\Payway\Refund;
 
 abstract class PaymentService
 {

@@ -7,7 +7,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Models\Webhook;
+use Ry\Model\Payway\Webhook;
 use App\Events\InternalWebhook;
 use Illuminate\Support\Facades\Event;
 use Ry\HTTPClient\Client;

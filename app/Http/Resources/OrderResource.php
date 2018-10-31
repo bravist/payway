@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\Order;
+use Ry\Model\Payway\Order;
 use EasyWeChat\Kernel\Support;
 
 class OrderResource extends JsonResource

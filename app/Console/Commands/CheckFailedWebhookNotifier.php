@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Webhook;
+use Ry\Model\Payway\Webhook;
 use App\Jobs\WebhookNotifier;
 
 class CheckFailedWebhookNotifier extends Command

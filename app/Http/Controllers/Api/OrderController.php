@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\OrderRequest;
-use App\Models\Order;
+use Ry\Model\Payway\Order;
 use Illuminate\Support\Facades\DB;
-use App\Models\Channel;
-use App\Models\ChannelPayWay;
+use Ry\Model\Payway\Channel;
+use Ry\Model\Payway\ChannelPayWay;
 use Carbon\Carbon;
 use App\Events\InternalRequestOrder;
 use App\Events\InternalRequestRefund;
@@ -19,7 +19,7 @@ use App\Services\WechatMwebService;
 use App\Services\WechatMiniService;
 use App\Services\WechatService;
 use App\Http\Resources\OrderResource;
-use App\Models\Refund;
+use Ry\Model\Payway\Refund;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OrderController extends Controller

@@ -13,7 +13,7 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\Models\Client::class, function (Faker $faker) {
+$factory->define(Ry\Model\Payway\Client::class, function (Faker $faker) {
     return [
         'appid' => 'ry'.$faker->unique()->regexify('[0-9][a-z0-9]{15}'),
         'secret' => $faker->unique()->regexify('[a-z0-9]{32}'),
