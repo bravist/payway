@@ -39,7 +39,7 @@ class CheckFailedWebhookNotifier extends Command
      */
     public function handle()
     {
-        Webhook::where('status', Webhook::STATUS_FAIL)
+        Webhook::whereIn('status', [Webhook::STATUS_FAIL, Webhook::STATUS_DEFAULT])
                 ->get()
                 ->each(function ($webhook) {
                     WebhookNotifier::dispatch($webhook)->onQueue('webhook-notifier');
