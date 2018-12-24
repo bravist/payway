@@ -109,7 +109,7 @@ class OrderController extends Controller
 
     /**
      * Create order
-     * @param  [type] $request [description]
+     * @param  Request $request [description]
      * @return [type]          [description]
      */
     protected function createOrder($request, $channel, $payWay)
