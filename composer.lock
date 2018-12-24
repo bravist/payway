@@ -2518,7 +2518,7 @@
             "source": {
                 "type": "git",
                 "url": "https://gitlab.ruoyubuy.com/ry/log.git",
-                "reference": "49d8ea6a8cff67353c237aea891535e55266a2f7"
+                "reference": "9c7c75ea064a00b0550ccc376cd076569d491f3e"
             },
             "require": {
                 "illuminate/http": "~5.0",
@@ -2559,7 +2559,7 @@
                 "wiki": "https://gitlab.ruoyubuy.com/ry/log",
                 "source": "https://gitlab.ruoyubuy.com/ry/log"
             },
-            "time": "2018-10-24T12:24:55+00:00"
+            "time": "2018-12-24T08:58:10+00:00"
         },
         {
             "name": "ry/model",
