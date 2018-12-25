@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\OrderRequest;
 use Ry\Model\Payway\Order;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Ry\Model\Payway\Channel;
 use Ry\Model\Payway\ChannelPayWay;
 use Carbon\Carbon;
@@ -101,6 +102,7 @@ class OrderController extends Controller
             DB::commit();
             return new OrderResource($order);
         } catch (HttpException $e) {
+            Log::warning(sprintf('创建订单失败 message:%s', $e->getMessage()));
             DB::rollBack();
             abort($e->getStatusCode(), $e->getMessage());
         }
@@ -197,6 +199,7 @@ class OrderController extends Controller
                 'refund_no' => $refund->refund_no
             ]]);
         } catch (HttpException $e) {
+            Log::warning(sprintf('创建退款单失败 message:%s', $e->getMessage()));
             DB::rollBack();
             abort($e->getStatusCode(), $e->getMessage());
         }
