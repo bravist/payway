@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Refund;
+use Ry\Model\Payway\Refund;
 use App\Events\ExternalQueryRefund;
 use EasyWeChat\Factory;
-use App\Models\Order;
+use Ry\Model\Payway\Order;
 use Illuminate\Support\Facades\Event;
 use Carbon\Carbon;
 

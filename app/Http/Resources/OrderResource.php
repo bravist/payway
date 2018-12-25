@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\Order;
+use Ry\Model\Payway\Order;
 use EasyWeChat\Kernel\Support;
 
 class OrderResource extends JsonResource
@@ -34,6 +34,7 @@ class OrderResource extends JsonResource
         return [
             'trade_no' => $this->trade_no,
             'wechat_mini' => $wechatMini,
+            'prepay_id' => $prepay->prepay_id,
         ];
     }
 }

@@ -72,7 +72,7 @@ return [
         
         'clients' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Client::class,
+            'model' => Ry\Model\Payway\Client::class,
         ],
 
         // 'users' => [

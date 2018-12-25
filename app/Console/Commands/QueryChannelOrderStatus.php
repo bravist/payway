@@ -5,11 +5,11 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Events\ExternalQueryOrder;
 use EasyWeChat\Factory;
-use App\Models\Order;
+use Ry\Model\Payway\Order;
 use Illuminate\Support\Facades\Event;
 use Carbon\Carbon;
-use App\Models\ChannelWebhook;
-use App\Models\Webhook;
+use Ry\Model\Payway\ChannelWebhook;
+use Ry\Model\Payway\Webhook;
 use App\Jobs\WebhookNotifier;
 
 class QueryChannelOrderStatus extends Command

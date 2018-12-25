@@ -5,8 +5,8 @@ namespace App\Listeners;
 use App\Events\ExternalQueryOrder;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\Log;
-use App\Models\Event;
+use Ry\Model\Payway\Log;
+use Ry\Model\Payway\Event;
 
 class SaveExternalQueryOrderLog
 {

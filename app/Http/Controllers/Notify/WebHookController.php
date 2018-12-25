@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Notify;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use Ry\Model\Payway\Order;
 use App\Events\ExternalWebhook;
 use Illuminate\Support\Facades\Event;
-use App\Models\ChannelWebhook;
-use App\Models\Webhook;
+use Ry\Model\Payway\ChannelWebhook;
+use Ry\Model\Payway\Webhook;
 use App\Jobs\WebhookNotifier;
 use Carbon\Carbon;
-use App\Models\Refund;
+use Ry\Model\Payway\Refund;
 use EasyWeChat\Factory;
 use Illuminate\Support\Facades\DB;
-use App\Models\ChannelPayWay;
+use Ry\Model\Payway\ChannelPayWay;
 
 class WebHookController extends Controller
 {
