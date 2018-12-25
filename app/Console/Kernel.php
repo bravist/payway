@@ -5,6 +5,8 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\QueryChannelOrderStatus;
+use App\Console\Commands\CheckFailedWebhookNotifier;
+use App\Console\Commands\QueryChannelRefundStatus;
 
 class Kernel extends ConsoleKernel
 {
@@ -14,7 +16,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        QueryChannelOrderStatus::class
+        QueryChannelOrderStatus::class,
+        CheckFailedWebhookNotifier::class,
+        QueryChannelRefundStatus::class
     ];
 
     /**
@@ -26,6 +30,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('command:query-channel-order-status')
+                ->onOneServer()
+                ->withoutOverlapping()
+                ->hourly();
+        $schedule->command('command:check-failed-webhook-notifier')
+                ->onOneServer()
+                ->withoutOverlapping()
+                ->everyFiveMinutes();
+        $schedule->command('command:query-channel-refund-status')
                 ->onOneServer()
                 ->withoutOverlapping()
                 ->hourly();
