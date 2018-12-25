@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Ry\Model\Payway\Refund;
 use EasyWeChat\Factory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Ry\Model\Payway\ChannelPayWay;
 
 class WebHookController extends Controller
@@ -68,6 +69,7 @@ class WebHookController extends Controller
                     WebhookNotifier::dispatch($notifier)->onQueue('webhook-notifier');
                     DB::commit();
                 } else {
+                    Log::warning(sprintf('支付渠道支付异步通知错误 code:%s', $message['return_code']));
                     return $fail('通信失败，请稍后再通知我');
                 }
                 DB::rollBack();
@@ -186,6 +188,7 @@ class WebHookController extends Controller
                         DB::commit();
                     }
                 } else {
+                    Log::warning(sprintf('支付渠道退款异步通知错误 code:%s', $reqInfo['refund_status']));
                     return $fail('通信失败，请稍后再通知我');
                 }
                 DB::rollBack();
