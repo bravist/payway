@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "b2e088bf8e0af81030996ffbe96be108",
@@ -2518,7 +2518,7 @@
             "source": {
                 "type": "git",
                 "url": "https://gitlab.ruoyubuy.com/ry/log.git",
-                "reference": "9c7c75ea064a00b0550ccc376cd076569d491f3e"
+                "reference": "b747dc0c0f2cddfa3c924ba15cd17cb18bbc890b"
             },
             "require": {
                 "illuminate/http": "~5.0",
@@ -2559,7 +2559,7 @@
                 "wiki": "https://gitlab.ruoyubuy.com/ry/log",
                 "source": "https://gitlab.ruoyubuy.com/ry/log"
             },
-            "time": "2018-12-24T08:58:10+00:00"
+            "time": "2018-12-25T08:58:59+00:00"
         },
         {
             "name": "ry/model",
