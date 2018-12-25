@@ -10,8 +10,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Ry\Model\Payway\Webhook;
 use App\Events\InternalWebhook;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Ry\HTTPClient\Client;
-use DB;
 
 class WebhookNotifier implements ShouldQueue
 {
@@ -38,13 +39,10 @@ class WebhookNotifier implements ShouldQueue
     {
         try {
             $params = json_decode($this->webhook->context, true);
-            logger($params);
-            logger($this->webhook->url);
             $response = (new Client)->request('POST', $this->webhook->url, [
                 'form_params' => $params
             ]);
             $context = (string) $response->getBody();
-            logger($context);
             Event::fire(new InternalWebhook($this->webhook->webhookable, $params, $context));
             if ($context == 'success') {
                 DB::transaction(function () use ($context) {
@@ -54,6 +52,7 @@ class WebhookNotifier implements ShouldQueue
                 });
             }
         } catch (\Exception $e) {
+            Log::warning(sprintf('Webhook通知内部系统失败 file:%s, message:%s', $e->getFile(), $e->getMessage()));
             DB::transaction(function () {
                 $this->webhook->update([
                     'status' => Webhook::STATUS_FAIL
