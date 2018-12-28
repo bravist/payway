@@ -177,7 +177,7 @@ class OrderController extends Controller
                 /**
                  * 部分退款
                  */
-                if ($order->amount <= $refundAmount) {
+                if ($order->refund_amount <= $refundAmount) {
                     throw new HttpException(400, '退款金额大于支付金额');
                 }
                 //TODO-异常或者应该有一个查询退款的操作
