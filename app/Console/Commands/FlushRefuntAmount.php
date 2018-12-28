@@ -45,7 +45,7 @@ class FlushRefuntAmount extends Command
             })
             ->get()
             ->each(function ($order) {
-                $order->refund = $order->refunds()->first()->amount;
+                $order->refund_amount = $order->refunds()->first()->amount;
                 $order->save();
             });
 
