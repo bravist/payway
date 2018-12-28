@@ -140,7 +140,7 @@ class OrderController extends Controller
             '%s%s',
             Carbon::now()->timezone('Asia/Shanghai')->format('YmdHis'),
             str_pad($order->id, 4, 0, STR_PAD_LEFT)
-            );
+        );
         $order->update([
             'trade_no' => $orderNo
         ]);
@@ -230,7 +230,7 @@ class OrderController extends Controller
             '%s%s',
             Carbon::now()->timezone('Asia/Shanghai')->format('YmdHis'),
             str_pad($order->id, 4, 0, STR_PAD_LEFT)
-            );
+        );
         $refund->update([
             'refund_no' => $refundNo
         ]);
