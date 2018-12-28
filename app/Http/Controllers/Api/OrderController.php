@@ -153,30 +153,55 @@ class OrderController extends Controller
      */
     public function refund(Request $request)
     {
+        $refundAmount = isset($request->amount) ? intval($request->amount) : 0;
         //创建退款单号, 开启事务
         DB::beginTransaction();
         //提交订单号
-        $order = Order::where('out_trade_no', $request->out_trade_no)
+        $order = Order::where('trade_no', $request->trade_no)
             ->where('status', Order::PAY_STATUS_SUCCESS)
             ->first();
-        if (!$order) {
+        $channel = $this->getChannel($order->client_id);
+        $payWay = $this->getPayWay($order->pay_way, $order->payment_channel_id);
+        if (! $order) {
             throw new HttpException(404, '没有该订单');
         }
         //订单归属人
         if ($this->client()->id != $order->client_id) {
             throw new HttpException(403, '没有权限操作该订单');
         }
-        //是否已经退款完成
-        if ($order->successfulRefund()) {
-            throw new HttpException(404, '订单已经退款完成');
-        }
-        $channel = $this->getChannel($order->client_id);
-        $payWay = $this->getPayWay($order->pay_way, $order->payment_channel_id);
-        if ($order->processingRefund()) {
-            throw new HttpException(404, '订单正在退款中');
-        }
         try {
-            $refund = $this->createRefund($order);
+            if ($refundAmount !== 0 && $order->amount !== $refundAmount) {
+                /**
+                 * 部分退款
+                 */
+                if ($order->amount >= $refundAmount) {
+                    throw new HttpException(400, '退款金额大于支付金额');
+                }
+                //部分退款单
+                $refund = $order->refunds()
+                        ->where('amount', $refundAmount)
+                        ->first();
+                if ($refund) {
+                    if ($refund->status == Refund::STATUS_SUCCESS) {
+                        throw new HttpException(404, '订单已经退款完成');
+                    }
+                    if ($refund->status == Refund::STATUS_PROCESSING) {
+                        throw new HttpException(404, '订单正在退款中');
+                    }
+                }
+                $refund = $this->createRefund($order, $refundAmount);
+            } else {
+                /**
+                 * 全部退款
+                 */
+                if ($order->successfulRefund()) {
+                    throw new HttpException(404, '订单已经退款完成');
+                }
+                if ($order->processingRefund()) {
+                    throw new HttpException(404, '订单正在退款中');
+                }
+                $refund = $this->createRefund($order);
+            }
             //创建退款请求日志
             Event::fire(new InternalRequestRefund($refund, $request, []));
             //创建渠道订单请求
@@ -210,15 +235,15 @@ class OrderController extends Controller
      * @param  Order  $order [description]
      * @return [type]        [description]
      */
-    protected function createRefund(Order $order)
+    protected function createRefund(Order $order, $refundAmount = 0)
     {
         $refund = Refund::create([
             'client_id' => $order->client_id,
             'payment_channel_id' => $order->payment_channel_id,
             'payment_order_id' => $order->id,
             'trade_no' => $order->trade_no,
-            'amount' => $order->amount,
-            'reason' => '用户退货',
+            'amount' => $refundAmount ? $refundAmount : $order->amount,
+            'reason' => $refundAmount ? '部分退款' : '全部退款',
         ]);
         //订单号生成并回写
         $refundNo = sprintf(
