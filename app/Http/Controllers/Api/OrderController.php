@@ -169,6 +169,9 @@ class OrderController extends Controller
         if ($this->client()->id != $order->client_id) {
             throw new HttpException(403, '没有权限操作该订单');
         }
+        if ($order->amount == $order->refund_amount) {
+            throw new HttpException(400, '没有可退款金额');
+        }
         try {
             if ($refundAmount !== 0 && $order->amount !== $refundAmount) {
                 /**
@@ -177,19 +180,10 @@ class OrderController extends Controller
                 if ($order->amount <= $refundAmount) {
                     throw new HttpException(400, '退款金额大于支付金额');
                 }
-                //部分退款单
-                $refund = $order->refunds()
-                        ->where('amount', $refundAmount)
-                        ->first();
-                if ($refund) {
-                    if ($refund->status == Refund::STATUS_SUCCESS) {
-                        throw new HttpException(404, '订单已经退款完成');
-                    }
-                    if ($refund->status == Refund::STATUS_PROCESSING) {
-                        throw new HttpException(404, '订单正在退款中');
-                    }
-                }
+                //TODO-异常或者应该有一个查询退款的操作
                 $refund = $this->createRefund($order, $refundAmount);
+                //增加退款金额
+                $order->increment('refund_amount', $refundAmount);
             } else {
                 /**
                  * 全部退款
