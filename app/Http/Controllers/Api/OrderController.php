@@ -29,14 +29,14 @@ class OrderController extends Controller
     {
         return Channel::where('client_id', $clientId)->first();
     }
-
+    
     protected function getPayWay($way, $channelId)
     {
         return ChannelPayWay::where('payment_channel_id', $channelId)
-            ->where('way', $way)
-            ->first();
+        ->where('way', $way)
+        ->first();
     }
-
+    
     /**
      * Create Order
      * @param  OrderRequest $request [description]
@@ -52,11 +52,11 @@ class OrderController extends Controller
         $payWay = $this->getPayWay($request->pay_way, $channel->id);
         try {
             $order = Order::where('out_trade_no', $request->out_trade_no)
-                            ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANCELED])
-                            ->where('payment_channel_id', $channel->id)
-                            ->where('payment_channel_pay_way_id', $payWay->id)
-                            ->orderBy('created_at', 'desc')
-                            ->first();
+            ->whereNotIn('status', [Order::PAY_STATUS_CLOSED, Order::PAY_STATUS_CANCELED])
+            ->where('payment_channel_id', $channel->id)
+            ->where('payment_channel_pay_way_id', $payWay->id)
+            ->orderBy('created_at', 'desc')
+            ->first();
             if ($order) {
                 //订单是否支的付成功
                 if ($order->status == Order::PAY_STATUS_SUCCESS) {
@@ -108,7 +108,7 @@ class OrderController extends Controller
         }
         //创建订单请求日志（业务系统请求网关）监听器
     }
-
+    
     /**
      * Create order
      * @param  Request $request [description]
@@ -126,6 +126,7 @@ class OrderController extends Controller
             'pay_way' => $request->pay_way,
             'subject' => $request->subject,
             'amount' => intval($request->amount),
+            'refund_amount' => 0,
             'body' => $request->body,
             'detail' => $request->detail,
             'extra' => $request->extra,
@@ -145,7 +146,7 @@ class OrderController extends Controller
         ]);
         return $order;
     }
-
+    
     /**
      * Refund
      * @param  [type] $request [description]
@@ -154,12 +155,10 @@ class OrderController extends Controller
     public function refund(Request $request)
     {
         $refundAmount = isset($request->amount) ? intval($request->amount) : 0;
-        //创建退款单号, 开启事务
-        DB::beginTransaction();
         //提交订单号
         $order = Order::where('trade_no', $request->trade_no)
-            ->where('status', Order::PAY_STATUS_SUCCESS)
-            ->first();
+        ->where('status', Order::PAY_STATUS_SUCCESS)
+        ->first();
         $channel = $this->getChannel($order->client_id);
         $payWay = $this->getPayWay($order->pay_way, $order->payment_channel_id);
         if (! $order) {
@@ -169,33 +168,20 @@ class OrderController extends Controller
         if ($this->client()->id != $order->client_id) {
             throw new HttpException(403, '没有权限操作该订单');
         }
-        if ($order->amount == $order->refund_amount) {
+        if ($order->amount < $order->refund_amount + $refundAmount) {
             throw new HttpException(400, '没有可退款金额');
         }
+        //创建退款单号, 开启事务
+        DB::beginTransaction();
         try {
-            if ($refundAmount !== 0 && $order->amount !== $refundAmount) {
-                /**
-                 * 部分退款
-                 */
-                if (($order->amount - $order->refund_amount) <= $refundAmount) {
-                    throw new HttpException(400, '退款金额大于支付金额');
-                }
-                //TODO-异常或者应该有一个查询退款的操作
-                $refund = $this->createRefund($order, $refundAmount);
-                //增加退款金额
-                $order->increment('refund_amount', $refundAmount);
-            } else {
-                /**
-                 * 全部退款
-                 */
-                if ($order->successfulRefund()) {
-                    throw new HttpException(404, '订单已经退款完成');
-                }
-                if ($order->processingRefund()) {
-                    throw new HttpException(404, '订单正在退款中');
-                }
-                $refund = $this->createRefund($order);
+            $rowCnt = Order::where('id', $order->id)
+            ->where('status', Order::PAY_STATUS_SUCCESS)
+            ->where('refund_amount', '<=', $order->amount - $refundAmount)
+            ->increment('refund_amount', $refundAmount);
+            if ($rowCnt != 1) {
+                throw new HttpException(400, '没有可退款金额');
             }
+            $refund = $this->createRefund($order, $refundAmount);
             //创建退款请求日志
             Event::fire(new InternalRequestRefund($refund, $request, []));
             //创建渠道订单请求
@@ -223,7 +209,7 @@ class OrderController extends Controller
             abort($e->getStatusCode(), $e->getMessage());
         }
     }
-
+    
     /**
      * Crearte refund
      * @param  Order  $order [description]
@@ -237,7 +223,7 @@ class OrderController extends Controller
             'payment_order_id' => $order->id,
             'trade_no' => $order->trade_no,
             'amount' => $refundAmount ? $refundAmount : $order->amount,
-            'reason' => $refundAmount ? '部分退款' : '全部退款',
+            'reason' => ($refundAmount < $order->amount) ? '部分退款' : '全部退款',
         ]);
         //订单号生成并回写
         $refundNo = sprintf(
